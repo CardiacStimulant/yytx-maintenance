@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yytx.maintenance.base.dao.RoleManagerDao">
+
+    <resultMap id="RoleMap" type="com.yytx.maintenance.base.entity.Role">
+        <id column="id" javaType="java.lang.Long" property="id"/>
+        <result column="name" property="name"/>
+        <result column="comments" property="comments"/>
+        <result column="version" property="version"/>
+        <result column="dr" property="dr"/>
+        <result column="last_modified" property="lastModified"/>
+        <result column="last_modify_user" property="lastModifyUser"/>
+        <result column="create_time" property="createTime"/>
+        <result column="create_user" property="createUser"/>
+    </resultMap>
+
+    <sql id="Role_Column_List">
+		r.id, r.`name`, r.comments, r.`version`, r.dr,
+		r.last_modify_user, DATE_FORMAT(r.last_modified, '%Y-%m-%d %H:%i:%s') as last_modified,
+		r.create_user, DATE_FORMAT(r.create_time, '%Y-%m-%d %H:%i:%s') as create_time
+	</sql>
+
+<!--    <select id="queryPage" resultMap="UserRoleVoMap">-->
+<!--        SELECT <include refid="User_Column_List" />-->
+<!--        FROM base_user t-->
+<!--        where t.dr = 0-->
+<!--        <if test="condition!=null and condition.searchMap!=null">-->
+<!--            <if test="condition.searchMap.loginAccount!=null and condition.searchMap.loginAccount!=''">-->
+<!--                and t.login_account like CONCAT('%',#{condition.searchMap.loginAccount},'%')-->
+<!--            </if>-->
+<!--            <if test="condition.searchMap.jobNumber!=null and condition.searchMap.jobNumber!=''">-->
+<!--                and t.job_number like CONCAT('%',#{condition.searchMap.jobNumber},'%')-->
+<!--            </if>-->
+<!--            <if test="condition.searchMap.name!=null and condition.searchMap.name!=''">-->
+<!--                and t.`name` like CONCAT('%',#{condition.searchMap.name},'%')-->
+<!--            </if>-->
+<!--            <if test="condition.searchMap.mobile!=null and condition.searchMap.mobile!=''">-->
+<!--                and t.mobile like CONCAT('%',#{condition.searchMap.mobile},'%')-->
+<!--            </if>-->
+<!--            <if test="condition.searchMap.email!=null and condition.searchMap.email!=''">-->
+<!--                and t.email like CONCAT('%',#{condition.searchMap.email},'%')-->
+<!--            </if>-->
+<!--            <if test="condition.searchMap.comments!=null and condition.searchMap.comments!=''">-->
+<!--                and t.comments like CONCAT('%',#{condition.searchMap.comments},'%')-->
+<!--            </if>-->
+<!--            <if test="condition.searchMap.roleName!=null and condition.searchMap.roleName!=''">-->
+<!--                and t.id in (-->
+<!--                    select bur.user_id-->
+<!--                    from base_role r-->
+<!--                    join base_user_role bur-->
+<!--                    on (r.id = bur.role_id and bur.dr=0)-->
+<!--                    where r.name like CONCAT('%',#{condition.searchMap.roleName},'%')-->
+<!--                )-->
+<!--            </if>-->
+<!--            &lt;!&ndash; 创建时间 &ndash;&gt;-->
+<!--            <if test="condition.searchMap.createTimeList != null and condition.searchMap.createTimeList.size() == 2-->
+<!--                    and condition.searchMap.createTimeList[0] != null and condition.searchMap.createTimeList[1] != null">-->
+<!--                and t.create_time &gt;= #{condition.searchMap.createTimeList[0]}-->
+<!--                and t.create_time &lt;= #{condition.searchMap.createTimeList[1]}-->
+<!--            </if>-->
+<!--            &lt;!&ndash; 创建人 &ndash;&gt;-->
+<!--            <if test="condition.searchMap.createUser!=null and condition.searchMap.createUser!=''">-->
+<!--                and t.create_user like CONCAT('%', #{condition.searchMap.createUser}, '%')-->
+<!--            </if>-->
+<!--            &lt;!&ndash; 更新时间 &ndash;&gt;-->
+<!--            <if test="condition.searchMap.modifyTimeList != null and condition.searchMap.modifyTimeList.size() == 2-->
+<!--                    and condition.searchMap.modifyTimeList[0] != null and condition.searchMap.modifyTimeList[1] != null">-->
+<!--                and t.last_modified &gt;= #{condition.searchMap.modifyTimeList[0]}-->
+<!--                and t.last_modified &lt;= #{condition.searchMap.modifyTimeList[1]}-->
+<!--            </if>-->
+<!--            &lt;!&ndash; 更新人 &ndash;&gt;-->
+<!--            <if test="condition.searchMap.lastModifyUser!=null and condition.searchMap.lastModifyUser!=''">-->
+<!--                and t.last_modify_user like CONCAT('%', #{condition.searchMap.lastModifyUser}, '%')-->
+<!--            </if>-->
+<!--        </if>-->
+<!--        order by t.last_modified desc-->
+<!--    </select>-->
+
+<!--    <select id="selectRole" resultMap="RoleMap">-->
+<!--        select <include refid="Role_Column_List" />-->
+<!--        from base_role r-->
+<!--        join base_user_role bur-->
+<!--        on (r.id = bur.role_id and bur.dr=0)-->
+<!--        where r.dr = 0-->
+<!--        <if test="userId != null">-->
+<!--            and bur.user_id = #{userId}-->
+<!--        </if>-->
+<!--    </select>-->
+    <select id="queryList" resultMap="RoleMap">
+        select <include refid="Role_Column_List" />
+        from base_role r
+        where r.dr = 0
+    </select>
+
+</mapper>

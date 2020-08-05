@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yytx.maintenance.base.dao.OperationLogDao">
+    <resultMap id="OperationLogMap" type="com.yytx.maintenance.base.entity.OperationLog">
+        <id column="id" property="id"/>
+        <result column="business_id" property="businessId"/>
+        <result column="business_type" property="businessType"/>
+        <result column="operation_type" property="operationType"/>
+        <result column="comments" property="comments"/>
+        <result column="dr" property="dr"/>
+        <result column="last_modified" property="lastModified"/>
+        <result column="last_modify_user" property="lastModifyUser"/>
+        <result column="create_time" property="createTime"/>
+        <result column="create_user" property="createUser"/>
+    </resultMap>
+
+    <select id="queryPage" resultMap="OperationLogMap">
+        select t.*
+        from base_operation_log t
+        where t.dr = 0
+        <if test="condition!=null and condition.searchMap!=null">
+            <if test=" condition.searchMap.businessId !=null ">
+                and t.business_id = #{condition.searchMap.businessId}
+            </if>
+            <if test=" condition.searchMap.businessType!=null and condition.searchMap.businessType!='' ">
+                and t.business_type = #{condition.searchMap.businessType}
+            </if>
+            <if test=" condition.searchMap.operationType!=null and condition.searchMap.operationType!='' ">
+                and t.operation_type = #{condition.searchMap.operationType}
+            </if>
+        </if>
+        order by t.id desc
+    </select>
+
+    <insert id="saveOperationLog" useGeneratedKeys="true" keyProperty="id">
+        insert into base_operation_log(
+            business_id
+            , business_type
+            , operation_type
+            , comments
+            , last_modify_user
+            , last_modified
+            , create_user
+            , create_time
+         ) values ( #{businessId}
+                  , #{businessType}
+                  , #{operationType}
+                  , #{comments}
+                  , #{lastModifyUser}
+                  , #{lastModified}
+                  , #{createUser}
+                  , #{createTime}
+         )
+    </insert>
+</mapper>
