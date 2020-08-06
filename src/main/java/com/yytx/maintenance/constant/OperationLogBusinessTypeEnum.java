@@ -6,6 +6,7 @@ package com.yytx.maintenance.constant;
 public enum OperationLogBusinessTypeEnum {
     USER("user", "用户"),
     ROLE("role", "角色"),
+    RESOURCE("resource", "资源"),
     USER_ROLE_RELATION("userRoleRelation", "用户角色关系");
 
     private String key;

@@ -13,6 +13,7 @@ public class Resource extends BaseEntity implements Serializable {
     private String type;
     private String owner;
     private String url;
+    private String key;
     private String comments;
     private Integer version;
 
@@ -56,6 +57,14 @@ public class Resource extends BaseEntity implements Serializable {
         this.url = url;
     }
 
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
     public String getComments() {
         return comments;
     }
@@ -80,6 +89,7 @@ public class Resource extends BaseEntity implements Serializable {
                 ", type='" + type + '\'' +
                 ", owner='" + owner + '\'' +
                 ", url='" + url + '\'' +
+                ", key='" + key + '\'' +
                 ", comments='" + comments + '\'' +
                 ", version=" + version +
                 ", dr=" + dr +

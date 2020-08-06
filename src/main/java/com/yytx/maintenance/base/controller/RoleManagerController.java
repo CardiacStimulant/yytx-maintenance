@@ -114,9 +114,9 @@ public class RoleManagerController {
     }
 
     /**
-     * 批量删除用户管理信息
-     * @param roles    用户信息
-     * @return 用户管理信息
+     * 批量删除角色信息
+     * @param roles    角色信息
+     * @return 角色信息
      */
     @RequestMapping(value = "/batchDeleteRole", method = RequestMethod.POST)
     public Object batchDeleteRole(@RequestBody List<Role> roles) {
@@ -127,8 +127,8 @@ public class RoleManagerController {
         } catch (RoleManagerException e) {
             result = new ResultUtil<String>().setErrorMsg(e.getMessage());
         } catch (Exception e) {
-            logger.error("保存用户管理信息异常", e);
-            result = new ResultUtil<String>().setErrorMsg("保存用户信息异常，请联系管理员");
+            logger.error("删除角色信息异常", e);
+            result = new ResultUtil<String>().setErrorMsg("删除角色信息异常，请联系管理员");
         }
         return result;
     }
@@ -147,8 +147,8 @@ public class RoleManagerController {
         } catch (RoleManagerException e) {
             result = new ResultUtil<String>().setErrorMsg(e.getMessage());
         } catch (Exception e) {
-            logger.error("保存角色管理信息异常", e);
-            result = new ResultUtil<String>().setErrorMsg("保存角色信息异常，请联系管理员");
+            logger.error("删除角色管理信息异常", e);
+            result = new ResultUtil<String>().setErrorMsg("删除角色信息异常，请联系管理员");
         }
         return result;
     }
