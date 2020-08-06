@@ -22,6 +22,7 @@
     <resultMap id="RoleMap" type="com.yytx.maintenance.base.entity.Role">
         <id column="id" javaType="java.lang.Long" property="id"/>
         <result column="name" property="name"/>
+        <result column="code" property="code"/>
         <result column="comments" property="comments"/>
         <result column="version" property="version"/>
         <result column="dr" property="dr"/>
@@ -67,7 +68,7 @@
 	</sql>
 
     <sql id="Role_Column_List">
-		r.id, r.`name`, r.comments, r.`version`, r.dr,
+		r.id, r.`name`, r.`code`, r.comments, r.`version`, r.dr,
 		r.last_modify_user, DATE_FORMAT(r.last_modified, '%Y-%m-%d %H:%i:%s') as last_modified,
 		r.create_user, DATE_FORMAT(r.create_time, '%Y-%m-%d %H:%i:%s') as create_time
 	</sql>
@@ -76,15 +77,6 @@
 		bur.id, bur.user_id, bur.role_id, bur.dr,
 		bur.last_modify_user, DATE_FORMAT(bur.last_modified, '%Y-%m-%d %H:%i:%s') as last_modified,
 		bur.create_user, DATE_FORMAT(bur.create_time, '%Y-%m-%d %H:%i:%s') as create_time
-	</sql>
-
-    <sql id="User_Role_Vo_Column_List">
-        t.id, t.login_account, t.`password`, t.job_number, t.`name`, t.mobile, t.email, t.comments, t.`version`, t.dr,
-		t.last_modify_user, DATE_FORMAT(t.last_modified, '%Y-%m-%d %H:%i:%s') as last_modified,
-		t.create_user, DATE_FORMAT(t.create_time, '%Y-%m-%d %H:%i:%s') as create_time,
-		r.id as rid, r.`name` as rname, r.comments as rcomments, r.`version` as rversion, r.dr as rdr,
-		r.last_modify_user as rlast_modify_user, DATE_FORMAT(r.last_modified, '%Y-%m-%d %H:%i:%s') as rlast_modified,
-		r.create_user as rcreate_user, DATE_FORMAT(r.create_time, '%Y-%m-%d %H:%i:%s') as rcreate_time
 	</sql>
 
     <select id="queryPage" resultMap="UserRoleVoMap">

@@ -6,11 +6,13 @@ import org.springframework.stereotype.Component;
 import java.io.Serializable;
 
 @Component
-public class Role extends BaseEntity implements Serializable {
+public class Resource extends BaseEntity implements Serializable {
     private static final long serialVersionUID = 7344534995410472230L;
     private Long id;
     private String name;
-    private String code;
+    private String type;
+    private String owner;
+    private String url;
     private String comments;
     private Integer version;
 
@@ -30,12 +32,28 @@ public class Role extends BaseEntity implements Serializable {
         this.name = name;
     }
 
-    public String getCode() {
-        return code;
+    public String getType() {
+        return type;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public String getComments() {
@@ -56,10 +74,12 @@ public class Role extends BaseEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "Role{" +
+        return "Resource{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", code='" + code + '\'' +
+                ", type='" + type + '\'' +
+                ", owner='" + owner + '\'' +
+                ", url='" + url + '\'' +
                 ", comments='" + comments + '\'' +
                 ", version=" + version +
                 ", dr=" + dr +
