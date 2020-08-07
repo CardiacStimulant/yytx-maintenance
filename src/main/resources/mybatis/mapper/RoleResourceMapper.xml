@@ -49,4 +49,9 @@
         where role_id=#{roleId}
         and resource_id=#{resourceId}
     </delete>
+
+    <delete id="removeRoleResourceByResourceId">
+        delete from base_role_resource
+        where resource_id=#{resourceId}
+    </delete>
 </mapper>

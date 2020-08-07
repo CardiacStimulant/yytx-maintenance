@@ -17,24 +17,10 @@ public interface ResourceDao {
     Resource getResourceById(@Param("id") Long id);
 
     int addResource(Resource resource);
-//
+
     int updateResource(Resource resource);
-//
+
     int checkResourceKeyExists(Resource resource);
-//
-//    int addResourceResourceRelation(ResourceResource roleResource);
 
     int deleteResource(Resource role);
-
-    int deleteRoleResourceByResourceId(@Param("resourceId") Long resourceId);
-
-    int deleteRoleResourceByRoleId(@Param("roleId") Long roleId);
-//
-//    List<UserResource> queryUserResourceList(@Param("userId") Long userId);
-
-
-//
-//    int deleteUserResourceByUserIdAndResourceIds(@Param("userId") Long userId, @Param("roleIds") List<Long> roleIds);
-//
-
 }

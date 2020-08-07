@@ -203,18 +203,4 @@
         where id=#{id}
         and `version` = #{version}
     </update>
-
-    <update id="deleteRoleResourceByResourceId">
-        update base_role_resource
-        set dr = 1
-        where dr = 0
-        and resource_id = #{resourceId}
-    </update>
-
-    <update id="deleteRoleResourceByRoleId">
-        update base_role_resource
-        set dr = 1
-        where dr = 0
-        and role_id = #{roleId}
-    </update>
 </mapper>

@@ -3,7 +3,7 @@ package com.yytx.maintenance.base.controller;
 import com.github.pagehelper.PageInfo;
 import com.yytx.maintenance.base.entity.Role;
 import com.yytx.maintenance.base.service.RoleService;
-import com.yytx.maintenance.excepion.RoleException;
+import com.yytx.maintenance.excepion.RoleManagerException;
 import com.yytx.maintenance.pojo.Result;
 import com.yytx.maintenance.pojo.SearchParams;
 import com.yytx.maintenance.utils.ResultUtil;
@@ -41,7 +41,7 @@ public class RoleController {
             SearchParamsUtil.parseTimeGroup(searchParams, "lastModifiedGroup", "modifyTimeList", null, null);
             PageInfo<Role> pageInfo = this.roleService.queryPage(searchParams);
             result = new ResultUtil<PageInfo<Role>>().setData(pageInfo);
-        } catch (RoleException e) {
+        } catch (RoleManagerException e) {
             result = new ResultUtil<PageInfo<Role>>().setErrorMsg(e.getMessage());
         } catch (Exception e) {
             logger.error("查询角色管理分页数据异常", e);
@@ -63,7 +63,7 @@ public class RoleController {
             searchParams.setSearchMap(searchMap);
             List<Role> roles = this.roleService.queryList(searchParams);
             result = new ResultUtil<List<Role>>().setData(roles);
-        } catch (RoleException e) {
+        } catch (RoleManagerException e) {
             result = new ResultUtil<List<Role>>().setErrorMsg(e.getMessage());
         } catch (Exception e) {
             logger.error("查询角色信息异常", e);
@@ -83,7 +83,7 @@ public class RoleController {
         try {
             role = this.roleService.addRole(role);
             result = new ResultUtil<Role>().setData(role);
-        } catch (RoleException e) {
+        } catch (RoleManagerException e) {
             result = new ResultUtil<Role>().setErrorMsg(e.getMessage());
         } catch (Exception e) {
             logger.error("保存角色信息异常", e);
@@ -103,7 +103,7 @@ public class RoleController {
         try {
             role = this.roleService.updateRole(role);
             result = new ResultUtil<Role>().setData(role);
-        } catch (RoleException e) {
+        } catch (RoleManagerException e) {
             result = new ResultUtil<Role>().setErrorMsg(e.getMessage());
         } catch (Exception e) {
             logger.error("保存角色信息异常", e);
@@ -123,7 +123,7 @@ public class RoleController {
         try {
             this.roleService.batchDeleteRole(roles);
             result = new ResultUtil<String>().setData("删除成功");
-        } catch (RoleException e) {
+        } catch (RoleManagerException e) {
             result = new ResultUtil<String>().setErrorMsg(e.getMessage());
         } catch (Exception e) {
             logger.error("删除角色信息异常", e);
@@ -143,7 +143,7 @@ public class RoleController {
         try {
             this.roleService.deleteRole(role);
             result = new ResultUtil<String>().setData("删除成功");
-        } catch (RoleException e) {
+        } catch (RoleManagerException e) {
             result = new ResultUtil<String>().setErrorMsg(e.getMessage());
         } catch (Exception e) {
             logger.error("删除角色管理信息异常", e);

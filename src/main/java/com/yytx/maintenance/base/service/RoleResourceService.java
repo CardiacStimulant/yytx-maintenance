@@ -4,7 +4,7 @@ import com.yytx.maintenance.base.dao.RoleResourceDao;
 import com.yytx.maintenance.base.entity.Resource;
 import com.yytx.maintenance.base.entity.RoleResource;
 import com.yytx.maintenance.context.UserInfo;
-import com.yytx.maintenance.excepion.RoleException;
+import com.yytx.maintenance.excepion.RoleManagerException;
 import com.yytx.maintenance.pojo.SearchParams;
 import com.yytx.maintenance.utils.InitializeObjectUtil;
 import org.slf4j.Logger;
@@ -28,13 +28,13 @@ public class RoleResourceService {
     /**
      * 角色添加全部资源
      * @param roleId
-     * @throws RoleException
+     * @throws RoleManagerException
      */
     @Transactional(rollbackFor = Exception.class)
-    public void addAllRoleResource(Long roleId) throws RoleException {
+    public void addAllRoleResource(Long roleId) throws RoleManagerException {
         if(roleId==null || roleId<=0) {
             logger.error("角色添加资源失败，角色ID为空");
-            throw new RoleException("角色添加资源失败，角色ID为空");
+            throw new RoleManagerException("角色添加资源失败，角色ID为空");
         }
         try {
             // 查询角色全部未配置的资源
@@ -49,21 +49,21 @@ public class RoleResourceService {
                 roleResource.setResourceId(resource.getId());
                 this.addRoleResource(roleResource);
             }
-        } catch (RoleException e) {
+        } catch (RoleManagerException e) {
             throw e;
         } catch (Exception e) {
             logger.error("角色添加资源异常，参数：" + roleId, e);
-            throw new RoleException("角色添加资源异常，请联系管理员");
+            throw new RoleManagerException("角色添加资源异常，请联系管理员");
         }
     }
 
     /**
      * 角色添加资源
      * @param roleResources
-     * @throws RoleException
+     * @throws RoleManagerException
      */
     @Transactional(rollbackFor = Exception.class)
-    public void addRoleResources(List<RoleResource> roleResources) throws RoleException {
+    public void addRoleResources(List<RoleResource> roleResources) throws RoleManagerException {
         if(roleResources==null || roleResources.size()<=0) {
             return;
         }
@@ -71,11 +71,11 @@ public class RoleResourceService {
             for(RoleResource roleResource : roleResources) {
                 this.addRoleResource(roleResource);
             }
-        } catch (RoleException e) {
+        } catch (RoleManagerException e) {
             throw e;
         } catch (Exception e) {
             logger.error("角色添加资源异常，参数：" + roleResources, e);
-            throw new RoleException("角色添加资源异常，请联系管理员");
+            throw new RoleManagerException("角色添加资源异常，请联系管理员");
         }
     }
 
@@ -83,27 +83,27 @@ public class RoleResourceService {
      * 添加角色-资源关系数据
      * @param roleResource
      * @return
-     * @throws RoleException
+     * @throws RoleManagerException
      */
-    public RoleResource addRoleResource(RoleResource roleResource) throws RoleException {
+    public RoleResource addRoleResource(RoleResource roleResource) throws RoleManagerException {
         if(roleResource==null) {
             logger.error("角色添加资源失败，参数为空");
-            throw new RoleException("角色添加资源失败，参数为空");
+            throw new RoleManagerException("角色添加资源失败，参数为空");
         }
         if(roleResource.getRoleId()==null || roleResource.getRoleId()<=0) {
             logger.error("角色添加资源失败，角色ID为空");
-            throw new RoleException("角色添加资源失败，角色ID为空");
+            throw new RoleManagerException("角色添加资源失败，角色ID为空");
         }
         if(roleResource.getResourceId()==null || roleResource.getResourceId()<=0) {
             logger.error("角色添加资源失败，资源ID为空");
-            throw new RoleException("角色添加资源失败，资源ID为空");
+            throw new RoleManagerException("角色添加资源失败，资源ID为空");
         }
         try {
             // 校验角色-资源关系是否已经存在
             boolean isExists = this.checkRoleResourceExists(roleResource);
             if(isExists) {
                 logger.error("角色添加资源失败，关系已存在，参数：" + roleResource);
-                throw new RoleException("角色添加资源失败，角色-资源关系发生变化，请重新刷新后重试");
+                throw new RoleManagerException("角色添加资源失败，角色-资源关系发生变化，请重新刷新后重试");
             } else {
                 InitializeObjectUtil.getInstance().initializeCreateAndModifyInfo(roleResource, UserInfo.getInstance());
                 int add = this.roleResourceDao.addRoleResource(roleResource);
@@ -111,14 +111,14 @@ public class RoleResourceService {
                     return roleResource;
                 } else {
                     logger.error("角色添加资源失败，新增返回数量为0，参数：" + roleResource);
-                    throw new RoleException("角色添加资源失败，请联系管理员");
+                    throw new RoleManagerException("角色添加资源失败，请联系管理员");
                 }
             }
-        } catch (RoleException e) {
+        } catch (RoleManagerException e) {
             throw e;
         } catch (Exception e) {
             logger.error("角色添加资源异常，参数：" + roleResource, e);
-            throw new RoleException("角色添加资源异常，请联系管理员");
+            throw new RoleManagerException("角色添加资源异常，请联系管理员");
         }
     }
 
@@ -134,13 +134,13 @@ public class RoleResourceService {
     /**
      * 角色移除全部资源
      * @param roleId
-     * @throws RoleException
+     * @throws RoleManagerException
      */
     @Transactional(rollbackFor = Exception.class)
-    public void removeAllRoleResource(Long roleId) throws RoleException {
+    public void removeAllRoleResource(Long roleId) throws RoleManagerException {
         if(roleId==null || roleId<=0) {
             logger.error("角色移除资源失败，角色ID为空");
-            throw new RoleException("角色移除资源失败，角色ID为空");
+            throw new RoleManagerException("角色移除资源失败，角色ID为空");
         }
         try {
             // 查询角色全部已配置的资源
@@ -155,21 +155,21 @@ public class RoleResourceService {
                 roleResource.setResourceId(resource.getId());
                 this.removeRoleResource(roleResource);
             }
-        } catch (RoleException e) {
+        } catch (RoleManagerException e) {
             throw e;
         } catch (Exception e) {
             logger.error("角色移除资源异常，参数：" + roleId, e);
-            throw new RoleException("角色移除资源异常，请联系管理员");
+            throw new RoleManagerException("角色移除资源异常，请联系管理员");
         }
     }
 
     /**
      * 角色移除资源
      * @param roleResources
-     * @throws RoleException
+     * @throws RoleManagerException
      */
     @Transactional(rollbackFor = Exception.class)
-    public void removeRoleResources(List<RoleResource> roleResources) throws RoleException {
+    public void removeRoleResources(List<RoleResource> roleResources) throws RoleManagerException {
         if(roleResources==null || roleResources.size()<=0) {
             return;
         }
@@ -177,11 +177,11 @@ public class RoleResourceService {
             for(RoleResource roleResource : roleResources) {
                 this.removeRoleResource(roleResource);
             }
-        } catch (RoleException e) {
+        } catch (RoleManagerException e) {
             throw e;
         } catch (Exception e) {
             logger.error("角色移除资源异常，参数：" + roleResources, e);
-            throw new RoleException("角色移除资源异常，请联系管理员");
+            throw new RoleManagerException("角色移除资源异常，请联系管理员");
         }
     }
 
@@ -189,20 +189,20 @@ public class RoleResourceService {
      * 移除角色-资源关系数据
      * @param roleResource
      * @return
-     * @throws RoleException
+     * @throws RoleManagerException
      */
-    public RoleResource removeRoleResource(RoleResource roleResource) throws RoleException {
+    public RoleResource removeRoleResource(RoleResource roleResource) throws RoleManagerException {
         if(roleResource==null) {
             logger.error("角色移除资源失败，参数为空");
-            throw new RoleException("角色移除资源失败，参数为空");
+            throw new RoleManagerException("角色移除资源失败，参数为空");
         }
         if(roleResource.getRoleId()==null || roleResource.getRoleId()<=0) {
             logger.error("角色移除资源失败，角色ID为空");
-            throw new RoleException("角色移除资源失败，角色ID为空");
+            throw new RoleManagerException("角色移除资源失败，角色ID为空");
         }
         if(roleResource.getResourceId()==null || roleResource.getResourceId()<=0) {
             logger.error("角色移除资源失败，资源ID为空");
-            throw new RoleException("角色移除资源失败，资源ID为空");
+            throw new RoleManagerException("角色移除资源失败，资源ID为空");
         }
         try {
             int remove = this.roleResourceDao.removeRoleResource(roleResource);
@@ -210,13 +210,31 @@ public class RoleResourceService {
                 return roleResource;
             } else {
                 logger.error("角色移除资源失败，移除返回数量为0，参数：" + roleResource);
-                throw new RoleException("角色移除资源失败，请联系管理员");
+                throw new RoleManagerException("角色移除资源失败，请联系管理员");
             }
-        } catch (RoleException e) {
+        } catch (RoleManagerException e) {
             throw e;
         } catch (Exception e) {
             logger.error("角色移除资源异常，参数：" + roleResource, e);
-            throw new RoleException("角色移除资源异常，请联系管理员");
+            throw new RoleManagerException("角色移除资源异常，请联系管理员");
+        }
+    }
+
+    /**
+     * 根据资源ID删除角色资源关系
+     * @param resourceId
+     * @throws RoleManagerException
+     */
+    public void removeRoleResourceByResourceId(Long resourceId) throws RoleManagerException {
+        if(resourceId==null || resourceId<=0) {
+            logger.error("根据资源ID删除角色资源信息失败，参数为空");
+            throw new RoleManagerException("删除角色资源关系失败，参数为空");
+        }
+        try {
+            this.roleResourceDao.removeRoleResourceByResourceId(resourceId);
+        } catch (Exception e) {
+            logger.error("根据资源ID删除角色资源关系异常，参数：" + resourceId, e);
+            throw new RoleManagerException("删除角色资源关系异常，请联系管理员");
         }
     }
 }

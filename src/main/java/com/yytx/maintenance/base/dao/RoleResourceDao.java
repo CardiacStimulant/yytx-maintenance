@@ -2,6 +2,7 @@ package com.yytx.maintenance.base.dao;
 
 import com.yytx.maintenance.base.entity.RoleResource;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 @Mapper
 public interface RoleResourceDao {
@@ -25,4 +26,11 @@ public interface RoleResourceDao {
      * @return
      */
     int removeRoleResource(RoleResource roleResource);
+
+    /**
+     * 根据资源ID删除角色-资源关系
+     * @param resourceId
+     * @return
+     */
+    int removeRoleResourceByResourceId(@Param("resourceId") Long resourceId);
 }

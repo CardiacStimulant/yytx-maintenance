@@ -30,6 +30,9 @@ public class ResourceService {
     private ResourceDao resourceDao;
 
     @Autowired
+    private RoleResourceService roleResourceService;
+
+    @Autowired
     private OperationLogService operationLogService;
 
     /**
@@ -180,54 +183,7 @@ public class ResourceService {
         }
         return resource;
     }
-//
-//    /**
-//     * 新增资源信息
-//     * @param roleResourceVo    资源信息
-//     * @return 资源信息
-//     * @throws ResourceException 自定义异常
-//     */
-//    @Transactional(rollbackFor=Exception.class)
-//    public RoleResourceVo addRoleManager(RoleResourceVo roleResourceVo) throws ResourceException {
-//        if(roleResourceVo==null) {
-//            logger.error("保存资源信息失败，参数为空");
-//            throw new ResourceException("保存资源信息失败，参数为空");
-//        }
-//        if(StringUtils.isEmpty(roleResourceVo.getName())) {
-//            logger.error("保存资源信息失败，资源名称为空");
-//            throw new ResourceException("保存资源信息失败，资源名称为空");
-//        }
-//        if(StringUtils.isEmpty(roleResourceVo.getCode())) {
-//            logger.error("保存资源信息失败，资源编码为空");
-//            throw new ResourceException("保存资源信息失败，资源编码为空");
-//        }
-//        try {
-//            /* 新增资源信息 */
-//            Role role = roleResourceVo.generateRole();
-//            role = this.addRole(role);
-//            if(role!=null && role.getId()>0) {
-//                // 添加操作日志
-//                operationLogService.save(new OperationLog(role.getId(),
-//                        OperationLogBusinessTypeEnum.ROLE.getKey(),
-//                        OperationLogOperationTypeEnum.ADD.getKey(),
-//                        UserInfo.getInstance().getUserName() + "新增资源：" + role.getName() + "（" + role.getCode() + "）",
-//                        UserInfo.getInstance()));
-//                /* 新增资源资源信息 */
-//                this.addRoleResourceRelation(role, roleResourceVo.getResourceList());
-//            } else {
-//                logger.error("新增资源信息失败，返回数量为0，参数：" + roleResourceVo);
-//                throw new ResourceException("新增资源信息失败，请联系管理员");
-//            }
-//            roleResourceVo.initializationRole(role);
-//        } catch (ResourceException e) {
-//            throw e;
-//        } catch (Exception e) {
-//            logger.error("保存资源信息异常，参数：" + roleResourceVo, e);
-//            throw new ResourceException("保存资源信息异常，请联系管理员");
-//        }
-//        return roleResourceVo;
-//    }
-//
+
     /**
      * 校验资源编码是否存在
      * @param resource  资源
@@ -236,31 +192,6 @@ public class ResourceService {
     private boolean checkResourceKeyExists(Resource resource) {
         return this.resourceDao.checkResourceKeyExists(resource)>0;
     }
-//
-//    /**
-//     * 新增资源和资源关系
-//     * @param role 资源信息
-//     * @param resourceList  资源信息
-//     * @return
-//     */
-//    private int addRoleResourceRelation(Role role, List<Resource> resourceList) {
-//        int success = 0;
-//        if(resourceList!=null && resourceList.size()>0) {
-//            RoleResource roleResource = new RoleResource();
-//            roleResource.setRoleId(role.getId());
-//            for(Resource resource : resourceList) {
-//                roleResource.setResourceId(resource.getId());
-//                InitializeObjectUtil.getInstance().initializeCreateAndModifyInfo(roleResource, UserInfo.getInstance());
-//                int addRelation = this.resourceDao.addRoleResourceRelation(roleResource);
-//                if(addRelation==1) {
-//                    success += addRelation;
-//                } else {
-//                    logger.error("添加资源资源关系失败，返回数量为0");
-//                }
-//            }
-//        }
-//        return success;
-//    }
 
     /**
      * 批量刪除资源
@@ -314,7 +245,7 @@ public class ResourceService {
                         UserInfo.getInstance().getUserName() + "删除了资源：" + resource.getName() + "（" + resource.getKey() + "）",
                         UserInfo.getInstance()));
                 // 删除资源关系
-                this.deleteRoleResourceByResourceId(resource.getId());
+                this.roleResourceService.removeRoleResourceByResourceId(resource.getId());
             } else {
                 logger.error("删除资源失败，删除数量返回为0，参数：" + resource);
                 throw new ResourceException("删除资源失败，资源已被修改，请重新刷新页面重试");
@@ -326,128 +257,4 @@ public class ResourceService {
             throw new ResourceException("删除资源异常，请联系管理员");
         }
     }
-
-    /**
-     * 删除资源相关的资源关系
-     * @param resourceId 资源ID
-     * @return
-     */
-    private int deleteRoleResourceByResourceId(Long resourceId) {
-        int success = 0;
-        if(resourceId!=null && resourceId>0) {
-            success = this.resourceDao.deleteRoleResourceByResourceId(resourceId);
-        }
-        return success;
-    }
-//
-//    /**
-//     * 修改资源信息
-//     * @param userRoleVo    资源信息
-//     * @return 资源信息
-//     * @throws ResourceException 自定义异常
-//     */
-//    @Transactional(rollbackFor=Exception.class)
-//    public UserRoleVo updateUserManager(UserRoleVo userRoleVo) throws ResourceException {
-//        if(userRoleVo==null) {
-//            logger.error("保存资源信息失败，参数为空");
-//            throw new ResourceException("保存资源信息失败，参数为空");
-//        }
-//        if(userRoleVo.getId()!=null && userRoleVo.getId()<=0) {
-//            logger.error("保存资源信息失败，资源ID为空");
-//            throw new ResourceException("保存资源信息失败，资源ID为空");
-//        }
-//        if(userRoleVo.getVersion()!=null && userRoleVo.getVersion()<0) {
-//            logger.error("保存资源信息失败，版本号为空");
-//            throw new ResourceException("保存资源信息失败，参数错误");
-//        }
-//        if(StringUtils.isEmpty(userRoleVo.getPassword())) {
-//            logger.error("保存资源信息失败，资源密码为空");
-//            throw new ResourceException("保存资源信息失败，参数错误");
-//        }
-//        if(StringUtils.isEmpty(userRoleVo.getName())) {
-//            logger.error("保存资源信息失败，资源名称为空");
-//            throw new ResourceException("保存资源信息失败，资源名称为空");
-//        }
-//        if(StringUtils.isEmpty(userRoleVo.getLoginAccount())) {
-//            logger.error("保存资源信息失败，资源登录账号为空");
-//            throw new ResourceException("保存资源信息失败，资源登录账号为空");
-//        }
-//        if(StringUtils.isNotEmpty(userRoleVo.getEmail()) && !CommUtils.isEmail(userRoleVo.getEmail())) {
-//            logger.error("保存资源信息失败，邮箱校验失败");
-//            throw new ResourceException("保存资源信息失败，邮箱格式错误");
-//        }
-//        if(StringUtils.isNotEmpty(userRoleVo.getMobile()) && !CommUtils.isMobileOrPhone(userRoleVo.getMobile())) {
-//            logger.error("保存资源信息失败，电话号码校验失败");
-//            throw new ResourceException("保存资源信息失败，电话号码格式错误");
-//        }
-//        try {
-//            // 查询资源信息，校验数据
-//            User oldUser = this.resourceDao.getUserById(userRoleVo.getId());
-//            // 校验版本号
-//            if(!oldUser.getVersion().equals(userRoleVo.getVersion())) {
-//                logger.error("保存资源信息失败，版本号不一致");
-//                throw new ResourceException("保存资源信息失败，资源已被修改，请重新刷新页面重试");
-//            }
-//            // 校验账号，账号不可修改
-//            if(!oldUser.getLoginAccount().equals(userRoleVo.getLoginAccount())) {
-//                logger.error("保存资源信息失败，账号不一致");
-//                throw new ResourceException("保存资源信息失败，参数错误");
-//            }
-//            /* 修改资源信息 */
-//            User user = userRoleVo.generateUser();
-//            int updateUser = this.updateUser(user);
-//            if(updateUser==1) {
-//                // 添加操作日志
-//                operationLogService.save(new OperationLog(user.getId(),
-//                        OperationLogBusinessTypeEnum.USER.getKey(),
-//                        OperationLogOperationTypeEnum.UPDATE.getKey(),
-//                        UserInfo.getInstance().getUserName() + "修改资源：" + user.getName() + "（" + user.getLoginAccount() + "）",
-//                        UserInfo.getInstance()));
-//                /* 处理资源问题 */
-//                if(userRoleVo.getRoleList()!=null && userRoleVo.getRoleList().size()>0) {
-//                    List<Role> roles = userRoleVo.getRoleList();
-//                    List<Long> removeRoleIds = new ArrayList<Long>();
-//                    // 查询已存在的资源关系
-//                    List<UserRole> userRoles = this.resourceDao.queryUserRoleList(user.getId());
-//                    if(userRoles!=null && userRoles.size()>0) {
-//                        /* 判断逻辑，如果匹配到相同的资源ID，那么就从待新增的资源集合中移除，如果没有匹配到相同的资源ID，那么将已存在的资源ID添加到待删除的集合中 */
-//                        boolean isExist;
-//                        for(UserRole userRole : userRoles) {
-//                            isExist = false;
-//                            for(Role role : roles) {
-//                                if(userRole.getRoleId().equals(role.getId())) {
-//                                    roles.remove(role);
-//                                    isExist = true;
-//                                }
-//                            }
-//                            if(!isExist) {
-//                                removeRoleIds.add(userRole.getRoleId());
-//                            }
-//                        }
-//                    }
-//                    if(removeRoleIds.size()>0) {
-//                        this.resourceDao.deleteUserRoleByUserIdAndRoleIds(user.getId(), removeRoleIds);
-//                    }
-//                    if(roles.size()>0) {
-//                        /* 新增资源信息 */
-//                        this.addUserRoleRelation(user, roles);
-//                    }
-//                } else {
-//                    // 删除资源资源关联信息
-//                    this.deleteUserRoleByUserId(user.getId());
-//                }
-//            } else {
-//                logger.error("保存资源信息失败，返回数量为0，参数：" + user);
-//                throw new ResourceException("保存资源信息失败，资源已被修改，请重新刷新页面重试");
-//            }
-//            userRoleVo.initializationUser(user);
-//        } catch (ResourceException e) {
-//            throw e;
-//        } catch (Exception e) {
-//            logger.error("保存资源信息异常，参数：" + userRoleVo, e);
-//            throw new ResourceException("保存资源信息异常，请联系管理员");
-//        }
-//        return userRoleVo;
-//    }
-//
 }
