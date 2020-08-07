@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController()
-@RequestMapping("roleManager")
+@RequestMapping("role")
 public class RoleController {
     private Logger logger = LoggerFactory.getLogger(RoleController.class);
 

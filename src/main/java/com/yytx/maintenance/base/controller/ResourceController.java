@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController()
-@RequestMapping("resourceManager")
+@RequestMapping("resource")
 public class ResourceController {
     private Logger logger = LoggerFactory.getLogger(ResourceController.class);
 
