@@ -35,12 +35,12 @@
                     <!-- 查询待配置 -->
                     <when test="condition.searchMap.searchConfig == 'wait'">
                         left join base_role_resource br on (br.resource_id=t.id and br.role_id=#{condition.searchMap.roleId})
-                        left join base_role r on (r.id=br.role_id and r.dr=0)
+                        left join base_role r on (r.id=br.role_id)
                     </when>
                     <!-- 查询已配置 -->
                     <when test="condition.searchMap.searchConfig == 'configured'">
                         join base_role_resource br on (br.resource_id=t.id and br.role_id=#{condition.searchMap.roleId})
-                        join base_role r on (r.id=br.role_id and r.dr=0)
+                        join base_role r on (r.id=br.role_id)
                     </when>
                 </choose>
             </if>
