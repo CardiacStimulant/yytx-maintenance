@@ -14,7 +14,7 @@ import java.util.List;
 
 class RoleManagerServiceTest extends YytxMaintenanceApplicationTests {
     @Autowired
-    private RoleManagerService roleManagerService;
+    private RoleService roleManagerService;
 
     @Test
     void queryPage() {
@@ -28,27 +28,5 @@ class RoleManagerServiceTest extends YytxMaintenanceApplicationTests {
         for(Role role : pageInfo.getList()) {
             System.out.println(role);
         }
-    }
-
-    @Test
-    void addUserManager() {
-        RoleResourceVo roleResourceVo = new RoleResourceVo();
-        roleResourceVo.setName("junit测试数据");
-        roleResourceVo.setCode("junit");
-        roleResourceVo.setComments("junit测试生成数据");
-        /* 添加角色关联信息 */
-        List<Resource> resources = new ArrayList<>();
-        Resource resource = new Resource();
-        resource.setId(1L);
-        resource.setName("用户管理");
-        resource.setType("menu");
-        resources.add(resource);
-        resource = new Resource();
-        resource.setId(2L);
-        resource.setName("新增");
-        resource.setType("button");
-        resources.add(resource);
-        roleResourceVo.setResourceList(resources);
-        this.roleManagerService.addRoleManager(roleResourceVo);
     }
 }

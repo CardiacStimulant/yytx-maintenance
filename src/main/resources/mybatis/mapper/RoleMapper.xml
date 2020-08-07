@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.yytx.maintenance.base.dao.RoleManagerDao">
+<mapper namespace="com.yytx.maintenance.base.dao.RoleDao">
 
     <resultMap id="RoleMap" type="com.yytx.maintenance.base.entity.Role">
         <id column="id" javaType="java.lang.Long" property="id"/>
@@ -109,25 +109,6 @@
         and `version` = #{version}
     </update>
 
-    <insert id="addRoleResourceRelation" keyProperty="id" useGeneratedKeys="true">
-        insert into base_role_resource(
-            resource_id,
-            role_id,
-            last_modify_user,
-            last_modified,
-            create_user,
-            create_time
-        )
-        values (
-            #{resourceId},
-            #{roleId},
-            #{lastModifyUser},
-            #{lastModified},
-            #{createUser},
-            #{createTime}
-        )
-    </insert>
-
     <select id="checkRoleCodeExists" resultType="java.lang.Integer">
         select count(*)
         from base_role
@@ -141,12 +122,5 @@
             `version` = #{version} + 1
         where id=#{id}
         and `version` = #{version}
-    </update>
-
-    <update id="deleteRoleResourceByRoleId">
-        update base_role_resource
-        set dr = 1
-        where dr = 0
-        and role_id = #{roleId}
     </update>
 </mapper>
