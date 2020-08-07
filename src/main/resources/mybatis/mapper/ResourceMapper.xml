@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.yytx.maintenance.base.dao.ResourceManagerDao">
+<mapper namespace="com.yytx.maintenance.base.dao.ResourceDao">
 
     <resultMap id="ResourceMap" type="com.yytx.maintenance.base.entity.Resource">
         <id column="id" javaType="java.lang.Long" property="id"/>
@@ -27,6 +27,24 @@
     <select id="queryPage" resultMap="ResourceMap">
         SELECT <include refid="Resource_Column_List" />
         FROM base_resource t
+        <if test="condition!=null and condition.searchMap!=null">
+            <if test="condition.searchMap.searchConfig!=null and condition.searchMap.searchConfig!=''
+                    and condition.searchMap.roleId!=null and condition.searchMap.roleId>0 ">
+                <!-- 查询待配置/已配置时使用的条件 -->
+                <choose>
+                    <!-- 查询待配置 -->
+                    <when test="condition.searchMap.searchConfig == 'wait'">
+                        left join base_role_resource br on (br.resource_id=t.id and br.role_id=#{condition.searchMap.roleId})
+                        left join base_role r on (r.id=br.role_id and r.dr=0)
+                    </when>
+                    <!-- 查询已配置 -->
+                    <when test="condition.searchMap.searchConfig == 'configured'">
+                        join base_role_resource br on (br.resource_id=t.id and br.role_id=#{condition.searchMap.roleId})
+                        join base_role r on (r.id=br.role_id and r.dr=0)
+                    </when>
+                </choose>
+            </if>
+        </if>
         where t.dr = 0
         <if test="condition!=null and condition.searchMap!=null">
             <if test="condition.searchMap.name!=null and condition.searchMap.name!=''">
@@ -61,6 +79,9 @@
             <if test="condition.searchMap.lastModifyUser!=null and condition.searchMap.lastModifyUser!=''">
                 and t.last_modify_user like CONCAT('%', #{condition.searchMap.lastModifyUser}, '%')
             </if>
+            <if test="condition.searchMap.searchConfig == 'wait'">
+                and (br.id is null or br.id='')
+            </if>
         </if>
         order by t.last_modified desc
     </select>
@@ -68,7 +89,31 @@
     <select id="queryList" resultMap="ResourceMap">
         select <include refid="Resource_Column_List" />
         from base_resource t
+        <if test="condition!=null and condition.searchMap!=null">
+            <if test="condition.searchMap.searchConfig!=null and condition.searchMap.searchConfig!=''
+                    and condition.searchMap.roleId!=null and condition.searchMap.roleId>0 ">
+                <!-- 查询待配置/已配置时使用的条件 -->
+                <choose>
+                    <!-- 查询待配置 -->
+                    <when test="condition.searchMap.searchConfig == 'wait'">
+                        left join base_role_resource br on (br.resource_id=t.id and br.role_id=#{condition.searchMap.roleId})
+                        left join base_role r on (r.id=br.role_id and r.dr=0)
+                    </when>
+                    <!-- 查询已配置 -->
+                    <when test="condition.searchMap.searchConfig == 'configured'">
+                        join base_role_resource br on (br.resource_id=t.id and br.role_id=#{condition.searchMap.roleId})
+                        join base_role r on (r.id=br.role_id and r.dr=0)
+                    </when>
+                </choose>
+            </if>
+        </if>
         where t.dr = 0
+        <if test="condition!=null and condition.searchMap!=null">
+            <if test="condition.searchMap.searchConfig == 'wait' and condition.searchMap.roleId!=null and condition.searchMap.roleId>0 ">
+                and (br.id is null or br.id='')
+            </if>
+        </if>
+        order by t.last_modified desc
     </select>
 
     <select id="getResourceById" resultMap="ResourceMap">

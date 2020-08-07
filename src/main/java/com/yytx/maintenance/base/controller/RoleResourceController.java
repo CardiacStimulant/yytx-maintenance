@@ -2,7 +2,7 @@ package com.yytx.maintenance.base.controller;
 
 import com.yytx.maintenance.base.entity.RoleResource;
 import com.yytx.maintenance.base.service.RoleResourceService;
-import com.yytx.maintenance.excepion.ResourceManagerException;
+import com.yytx.maintenance.excepion.ResourceException;
 import com.yytx.maintenance.pojo.Result;
 import com.yytx.maintenance.utils.ResultUtil;
 import org.slf4j.Logger;
@@ -31,7 +31,7 @@ public class RoleResourceController {
         try {
             this.roleResourceService.addAllRoleResource(roleId);
             result = new ResultUtil<String>().setData("添加资源成功");
-        } catch (ResourceManagerException e) {
+        } catch (ResourceException e) {
             result = new ResultUtil<String>().setErrorMsg(e.getMessage());
         } catch (Exception e) {
             logger.error("添加资源异常", e);
@@ -51,7 +51,7 @@ public class RoleResourceController {
         try {
             this.roleResourceService.addRoleResources(roleResources);
             result = new ResultUtil<String>().setData("添加资源成功");
-        } catch (ResourceManagerException e) {
+        } catch (ResourceException e) {
             result = new ResultUtil<String>().setErrorMsg(e.getMessage());
         } catch (Exception e) {
             logger.error("添加资源异常", e);
@@ -71,7 +71,7 @@ public class RoleResourceController {
         try {
             this.roleResourceService.removeAllRoleResource(roleId);
             result = new ResultUtil<String>().setData("移除资源成功");
-        } catch (ResourceManagerException e) {
+        } catch (ResourceException e) {
             result = new ResultUtil<String>().setErrorMsg(e.getMessage());
         } catch (Exception e) {
             logger.error("移除资源异常", e);
@@ -91,7 +91,7 @@ public class RoleResourceController {
         try {
             this.roleResourceService.removeRoleResources(roleResources);
             result = new ResultUtil<String>().setData("移除资源成功");
-        } catch (ResourceManagerException e) {
+        } catch (ResourceException e) {
             result = new ResultUtil<String>().setErrorMsg(e.getMessage());
         } catch (Exception e) {
             logger.error("移除资源异常", e);

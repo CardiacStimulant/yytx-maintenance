@@ -23,7 +23,7 @@ public class RoleResourceService {
     private RoleResourceDao roleResourceDao;
 
     @Autowired
-    private ResourceManagerService resourceManagerService;
+    private ResourceService resourceManagerService;
 
     /**
      * 角色添加全部资源

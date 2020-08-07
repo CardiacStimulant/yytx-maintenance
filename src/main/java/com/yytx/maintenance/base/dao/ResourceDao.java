@@ -9,7 +9,7 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 @Mapper
-public interface ResourceManagerDao {
+public interface ResourceDao {
     Page<Resource> queryPage(@Param("condition") SearchParams searchParams);
 
     List<Resource> queryList(@Param("condition") SearchParams searchParams);

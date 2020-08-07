@@ -2,12 +2,14 @@ package com.yytx.maintenance.base.controller;
 
 import com.github.pagehelper.PageInfo;
 import com.yytx.maintenance.base.entity.Resource;
-import com.yytx.maintenance.base.service.ResourceManagerService;
-import com.yytx.maintenance.excepion.ResourceManagerException;
+import com.yytx.maintenance.base.service.ResourceService;
+import com.yytx.maintenance.excepion.ResourceException;
 import com.yytx.maintenance.pojo.Result;
 import com.yytx.maintenance.pojo.SearchParams;
 import com.yytx.maintenance.utils.ResultUtil;
 import com.yytx.maintenance.utils.SearchParamsUtil;
+import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +20,11 @@ import java.util.Map;
 
 @RestController()
 @RequestMapping("resourceManager")
-public class ResourceManagerController {
-    private Logger logger = LoggerFactory.getLogger(ResourceManagerController.class);
+public class ResourceController {
+    private Logger logger = LoggerFactory.getLogger(ResourceController.class);
 
     @Autowired
-    private ResourceManagerService resourceManagerService;
+    private ResourceService resourceService;
 
     /**
      * 查询资源分页数据
@@ -39,35 +41,13 @@ public class ResourceManagerController {
             SearchParamsUtil.parseTimeGroup(searchParams, "createTimeGroup", "createTimeList", null, null);
             // 更新时间的查询条件
             SearchParamsUtil.parseTimeGroup(searchParams, "lastModifiedGroup", "modifyTimeList", null, null);
-            PageInfo<Resource> pageInfo = this.resourceManagerService.queryPage(searchParams);
+            PageInfo<Resource> pageInfo = this.resourceService.queryPage(searchParams);
             result = new ResultUtil<PageInfo<Resource>>().setData(pageInfo);
-        } catch (ResourceManagerException e) {
+        } catch (ResourceException e) {
             result = new ResultUtil<PageInfo<Resource>>().setErrorMsg(e.getMessage());
         } catch (Exception e) {
             logger.error("查询资源分页数据异常", e);
             result = new ResultUtil<PageInfo<Resource>>().setErrorMsg("查询资源分页异常，请联系管理员");
-        }
-        return result;
-    }
-
-    /**
-     * 查询所有资源信息
-     * @param searchMap 查询条件
-     * @return 资源分页数据
-     */
-    @RequestMapping(value = "/queryList", method = {RequestMethod.POST, RequestMethod.GET})
-    public Object queryList(@RequestParam Map<String, Object> searchMap) {
-        Result<List<Resource>> result;
-        try {
-            SearchParams searchParams = new SearchParams();
-            searchParams.setSearchMap(searchMap);
-            List<Resource> resources = this.resourceManagerService.queryList(searchParams);
-            result = new ResultUtil<List<Resource>>().setData(resources);
-        } catch (ResourceManagerException e) {
-            result = new ResultUtil<List<Resource>>().setErrorMsg(e.getMessage());
-        } catch (Exception e) {
-            logger.error("查询资源信息异常", e);
-            result = new ResultUtil<List<Resource>>().setErrorMsg("查询资源信息异常，请联系管理员");
         }
         return result;
     }
@@ -81,9 +61,9 @@ public class ResourceManagerController {
     public Object addResource(@RequestBody Resource resource) {
         Result<Resource> result;
         try {
-            resource = this.resourceManagerService.addResource(resource);
+            resource = this.resourceService.addResource(resource);
             result = new ResultUtil<Resource>().setData(resource);
-        } catch (ResourceManagerException e) {
+        } catch (ResourceException e) {
             result = new ResultUtil<Resource>().setErrorMsg(e.getMessage());
         } catch (Exception e) {
             logger.error("保存资源信息异常", e);
@@ -101,9 +81,9 @@ public class ResourceManagerController {
     public Object updateResource(@RequestBody Resource resource) {
         Result<Resource> result;
         try {
-            resource = this.resourceManagerService.updateResource(resource);
+            resource = this.resourceService.updateResource(resource);
             result = new ResultUtil<Resource>().setData(resource);
-        } catch (ResourceManagerException e) {
+        } catch (ResourceException e) {
             result = new ResultUtil<Resource>().setErrorMsg(e.getMessage());
         } catch (Exception e) {
             logger.error("保存资源信息异常", e);
@@ -121,9 +101,9 @@ public class ResourceManagerController {
     public Object batchDeleteResource(@RequestBody List<Resource> resources) {
         Result<String> result;
         try {
-            this.resourceManagerService.batchDeleteResource(resources);
+            this.resourceService.batchDeleteResource(resources);
             result = new ResultUtil<String>().setData("删除成功");
-        } catch (ResourceManagerException e) {
+        } catch (ResourceException e) {
             result = new ResultUtil<String>().setErrorMsg(e.getMessage());
         } catch (Exception e) {
             logger.error("删除资源信息异常", e);
@@ -141,13 +121,45 @@ public class ResourceManagerController {
     public Object deleteResource(@RequestBody Resource resource) {
         Result<String> result;
         try {
-            this.resourceManagerService.deleteResource(resource);
+            this.resourceService.deleteResource(resource);
             result = new ResultUtil<String>().setData("删除成功");
-        } catch (ResourceManagerException e) {
+        } catch (ResourceException e) {
             result = new ResultUtil<String>().setErrorMsg(e.getMessage());
         } catch (Exception e) {
             logger.error("删除资源信息异常", e);
             result = new ResultUtil<String>().setErrorMsg("删除资源信息异常，请联系管理员");
+        }
+        return result;
+    }
+
+    /**
+     * 查询待配置分页数据
+     * @param searchMap 查询条件，分页条件必传，pageNum：页码，pageSize：页大小，roleId必传，searchConfig必传
+     * @return 资源分页数据
+     */
+    @RequestMapping(value = "/queryConfigPage", method = {RequestMethod.POST, RequestMethod.GET})
+    public Object queryConfigPage(@RequestParam Map<String, Object> searchMap) {
+        Result<PageInfo<Resource>> result;
+        try {
+            /* 校验roleId是否传递，如果没有传递，则直接返回 */
+            Long roleId = MapUtils.getLong(searchMap, "roleId");
+            if(roleId==null || roleId<=0) {
+                throw new ResourceException("查询待配置资源数据失败，角色ID为空");
+            }
+            /* 校验searchConfig是否传递，如果没有传递，则直接返回 */
+            String searchConfig = MapUtils.getString(searchMap, "searchConfig");
+            if(StringUtils.isEmpty(searchConfig)) {
+                throw new ResourceException("查询待配置资源数据失败，参数错误");
+            }
+            SearchParams searchParams = new SearchParams();
+            searchParams.setSearchMap(searchMap);
+            PageInfo<Resource> pageInfo = this.resourceService.queryPage(searchParams);
+            result = new ResultUtil<PageInfo<Resource>>().setData(pageInfo);
+        } catch (ResourceException e) {
+            result = new ResultUtil<PageInfo<Resource>>().setErrorMsg(e.getMessage());
+        } catch (Exception e) {
+            logger.error("查询资源分页数据异常", e);
+            result = new ResultUtil<PageInfo<Resource>>().setErrorMsg("查询资源分页异常，请联系管理员");
         }
         return result;
     }
