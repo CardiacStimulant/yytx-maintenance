@@ -5,10 +5,12 @@ import com.yytx.maintenance.base.entity.Resource;
 import com.yytx.maintenance.pojo.SearchParams;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Mapper
+@Repository
 public interface ResourceDao {
     Page<Resource> queryPage(@Param("condition") SearchParams searchParams);
 

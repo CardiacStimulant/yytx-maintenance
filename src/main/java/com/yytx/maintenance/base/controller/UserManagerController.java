@@ -1,6 +1,6 @@
 package com.yytx.maintenance.base.controller;
 
-import com.github.pagehelper.Page;
+import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageInfo;
 import com.yytx.maintenance.base.service.UserManagerService;
 import com.yytx.maintenance.base.vo.UserRoleVo;
@@ -9,6 +9,7 @@ import com.yytx.maintenance.pojo.Result;
 import com.yytx.maintenance.pojo.SearchParams;
 import com.yytx.maintenance.utils.ResultUtil;
 import com.yytx.maintenance.utils.SearchParamsUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -127,6 +128,38 @@ public class UserManagerController {
         } catch (Exception e) {
             logger.error("保存用户管理信息异常", e);
             result = new ResultUtil<String>().setErrorMsg("保存用户信息异常，请联系管理员");
+        }
+        return result;
+    }
+
+    /**
+     * 修改密码
+     * @param jsonData    密码信息
+     * @return
+     */
+    @RequestMapping(value = "/updatePassword", method = RequestMethod.POST)
+    public Object updatePassword(@RequestBody String jsonData) {
+        Result<String> result;
+        try {
+            if(StringUtils.isEmpty(jsonData)) {
+                logger.error("修改密码失败，参数为空");
+                throw new UserManagerException("修改密码失败，参数为空");
+            }
+            JSONObject json = JSONObject.parseObject(jsonData);
+            // ID
+            Long userId = json.getLong("userId");
+            // version
+            Integer version = json.getInteger("version");
+            // 新密码
+            String newPassword = json.getString("newPassword");
+            // 修改密码
+            this.userManagerService.updatePassword(userId, version, newPassword);
+            result = new ResultUtil<String>().setData("删除成功");
+        } catch (UserManagerException e) {
+            result = new ResultUtil<String>().setErrorMsg(e.getMessage());
+        } catch (Exception e) {
+            logger.error("修改密码异常，参数：" + jsonData, e);
+            result = new ResultUtil<String>().setErrorMsg("修改密码异常，请联系管理员");
         }
         return result;
     }

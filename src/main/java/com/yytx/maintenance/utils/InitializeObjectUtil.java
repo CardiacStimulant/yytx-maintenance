@@ -56,7 +56,7 @@ public class InitializeObjectUtil {
                     if(method.getName().equals("setCreateTime") || method.getName().equals("setLastModified")) {
                         method.invoke(object, DateUtil.toDateString(new Date()));
                     } else if (method.getName().equals("setCreateUser") || method.getName().equals("setLastModifyUser")){
-                        method.invoke(object, userInfoInstance.getUserName());
+                        method.invoke(object, userInfoInstance.getUser().getName());
                     }
                 } catch (Exception e) {
                     logger.error("设置对象信息异常，调用方法（" + method.getName() + "）异常", e);
@@ -88,7 +88,7 @@ public class InitializeObjectUtil {
                     if(method.getName().equals("setLastModified")) {
                         method.invoke(object, DateUtil.toDateString(new Date()));
                     } else if (method.getName().equals("setLastModifyUser")){
-                        method.invoke(object, userInfoInstance.getUserName());
+                        method.invoke(object, userInfoInstance.getUser().getName());
                     }
                 } catch (Exception e) {
                     logger.error("设置对象信息异常，调用方法（" + method.getName() + "）异常", e);
@@ -120,7 +120,7 @@ public class InitializeObjectUtil {
                     if(method.getName().equals("setCreateTime")) {
                         method.invoke(object, DateUtil.toDateString(new Date()));
                     } else if (method.getName().equals("setCreateUser")){
-                        method.invoke(object, userInfoInstance.getUserName());
+                        method.invoke(object, userInfoInstance.getUser().getName());
                     }
                 } catch (Exception e) {
                     logger.error("设置对象信息异常，调用方法（" + method.getName() + "）异常", e);

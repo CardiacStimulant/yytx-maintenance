@@ -5,10 +5,12 @@ import com.yytx.maintenance.base.entity.Role;
 import com.yytx.maintenance.pojo.SearchParams;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Mapper
+@Repository
 public interface RoleDao {
     Page<Role> queryPage(@Param("condition") SearchParams searchParams);
 

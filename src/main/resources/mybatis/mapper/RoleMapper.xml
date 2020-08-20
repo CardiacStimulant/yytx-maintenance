@@ -62,7 +62,18 @@
     <select id="queryList" resultMap="RoleMap">
         select <include refid="Role_Column_List" />
         from base_role r
+        <if test="condition!=null and condition.searchMap!=null">
+            <if test="condition.searchMap.userId!=null and condition.searchMap.userId>0">
+                join base_user_role bur
+                on (r.id = bur.role_id)
+            </if>
+        </if>
         where r.dr = 0
+        <if test="condition!=null and condition.searchMap!=null">
+            <if test="condition.searchMap.userId!=null and condition.searchMap.userId>0">
+                and bur.user_id = #{condition.searchMap.userId}
+            </if>
+        </if>
     </select>
 
     <select id="getRoleById" resultMap="RoleMap">

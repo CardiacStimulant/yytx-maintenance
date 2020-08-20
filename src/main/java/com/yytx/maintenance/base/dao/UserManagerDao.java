@@ -7,14 +7,20 @@ import com.yytx.maintenance.base.vo.UserRoleVo;
 import com.yytx.maintenance.pojo.SearchParams;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Mapper
+@Repository
 public interface UserManagerDao{
+    User getUserByLoginAccount(@Param("loginAccount") String loginAccount);
+
     Page<UserRoleVo> queryPage(@Param("condition") SearchParams searchParams);
 
     User getUserById(@Param("userId") Long userId);
+
+    User getUserByAccount(@Param("account") String account);
 
     int addUser(User user);
 
@@ -31,4 +37,6 @@ public interface UserManagerDao{
     int deleteUserRoleByUserIdAndRoleIds(@Param("userId") Long userId, @Param("roleIds") List<Long> roleIds);
 
     int updateUser(User user);
+
+    int updatePassword(@Param("id") Long id, @Param("version") Integer version, @Param("password") String password);
 }

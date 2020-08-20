@@ -3,8 +3,10 @@ package com.yytx.maintenance.base.dao;
 import com.yytx.maintenance.base.entity.RoleResource;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 @Mapper
+@Repository
 public interface RoleResourceDao {
     /**
      * 添加角色-资源关系

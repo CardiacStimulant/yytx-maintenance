@@ -242,7 +242,7 @@ public class ResourceService {
                 operationLogService.save(new OperationLog(resource.getId(),
                         OperationLogBusinessTypeEnum.RESOURCE.getKey(),
                         OperationLogOperationTypeEnum.DELETE.getKey(),
-                        UserInfo.getInstance().getUserName() + "删除了资源：" + resource.getName() + "（" + resource.getKey() + "）",
+                        UserInfo.getInstance().getUser().getName() + "删除了资源：" + resource.getName() + "（" + resource.getKey() + "）",
                         UserInfo.getInstance()));
                 // 删除资源关系
                 this.roleResourceService.removeRoleResourceByResourceId(resource.getId());

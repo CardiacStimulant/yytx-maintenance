@@ -5,8 +5,10 @@ import com.yytx.maintenance.base.entity.OperationLog;
 import com.yytx.maintenance.pojo.SearchParams;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 @Mapper
+@Repository
 public interface OperationLogDao {
     Page<OperationLog> queryPage(@Param("condition") SearchParams searchParams);
 

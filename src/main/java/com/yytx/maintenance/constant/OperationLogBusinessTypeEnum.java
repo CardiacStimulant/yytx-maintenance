@@ -7,7 +7,7 @@ public enum OperationLogBusinessTypeEnum {
     USER("user", "用户"),
     ROLE("role", "角色"),
     RESOURCE("resource", "资源"),
-    USER_ROLE_RELATION("userRoleRelation", "用户角色关系");
+    TENANT_TELEPHONE_NUMBER("tenantTelephoneNumber", "租户号码");
 
     private String key;
 

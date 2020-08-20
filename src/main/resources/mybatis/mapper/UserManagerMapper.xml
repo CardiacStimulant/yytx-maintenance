@@ -79,6 +79,13 @@
 		bur.create_user, DATE_FORMAT(bur.create_time, '%Y-%m-%d %H:%i:%s') as create_time
 	</sql>
 
+    <select id="getUserByLoginAccount" resultMap="UserMap">
+        select <include refid="User_Column_List" />
+        from base_user t
+        where t.dr = 0
+        and t.login_account = #{loginAccount}
+    </select>
+
     <select id="queryPage" resultMap="UserRoleVoMap">
         SELECT <include refid="User_Column_List" />
         FROM base_user t
@@ -150,6 +157,12 @@
         select <include refid="User_Column_List" />
         from base_user t
         where t.id=#{userId}
+    </select>
+
+    <select id="getUserByAccount" resultMap="UserMap">
+        select <include refid="User_Column_List" />
+        from base_user t
+        where t.login_account=#{account}
     </select>
 
     <select id="checkUserLoginAccountExists" resultType="java.lang.Integer">
@@ -253,6 +266,13 @@
             last_modify_user=#{lastModifyUser},
             last_modified=#{lastModified},
             `version` = version+1
+        where id=#{id}
+        and `version`=#{version}
+    </update>
+
+    <update id="updatePassword">
+        update base_user
+        set `password` = #{password}
         where id=#{id}
         and `version`=#{version}
     </update>

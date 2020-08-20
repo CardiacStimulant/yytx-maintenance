@@ -115,6 +115,12 @@ public class RoleService {
                 InitializeObjectUtil.getInstance().initializeCreateAndModifyInfo(role, UserInfo.getInstance());
                 int add = this.roleDao.addRole(role);
                 if(add==1) {
+                    // 添加操作日志
+                    operationLogService.save(new OperationLog(role.getId(),
+                            OperationLogBusinessTypeEnum.ROLE.getKey(),
+                            OperationLogOperationTypeEnum.ADD.getKey(),
+                            UserInfo.getInstance().getUser().getName() + "新增了角色：" + role.getName() + "（" + role.getCode() + "）",
+                            UserInfo.getInstance()));
                     role = this.getRoleById(role.getId());
                 } else {
                     logger.error("新增角色信息失败，返回数量为0");
@@ -167,8 +173,14 @@ public class RoleService {
             }
             // 设置创建信息和修改信息
             InitializeObjectUtil.getInstance().initializeModifyInfo(role, UserInfo.getInstance());
-            int add = this.roleDao.updateRole(role);
-            if(add==1) {
+            int update = this.roleDao.updateRole(role);
+            if(update==1) {
+                // 添加操作日志
+                operationLogService.save(new OperationLog(role.getId(),
+                        OperationLogBusinessTypeEnum.ROLE.getKey(),
+                        OperationLogOperationTypeEnum.UPDATE.getKey(),
+                        UserInfo.getInstance().getUser().getName() + "修改了角色：" + role.getName() + "（" + role.getCode() + "）",
+                        UserInfo.getInstance()));
                 role = this.getRoleById(role.getId());
             } else {
                 logger.error("修改角色信息失败，返回数量为0");
@@ -241,7 +253,7 @@ public class RoleService {
                 operationLogService.save(new OperationLog(role.getId(),
                         OperationLogBusinessTypeEnum.ROLE.getKey(),
                         OperationLogOperationTypeEnum.DELETE.getKey(),
-                        UserInfo.getInstance().getUserName() + "删除了角色：" + role.getName() + "（" + role.getCode() + "）",
+                        UserInfo.getInstance().getUser().getName() + "删除了角色：" + role.getName() + "（" + role.getCode() + "）",
                         UserInfo.getInstance()));
                 // 删除角色关系
                 this.roleResourceService.removeAllRoleResource(role.getId());

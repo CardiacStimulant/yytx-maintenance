@@ -83,7 +83,7 @@
                 and (br.id is null or br.id='')
             </if>
         </if>
-        order by t.last_modified desc
+        order by t.id
     </select>
 
     <select id="queryList" resultMap="ResourceMap">
@@ -106,6 +106,16 @@
                     </when>
                 </choose>
             </if>
+
+            <if test="condition.searchMap.roleList!=null and condition.searchMap.roleList.size()>0">
+                join base_role_resource br on (br.resource_id=t.id
+                    and br.role_id in
+                    <foreach collection="condition.searchMap.roleList" item="item" index="index" separator="," open="(" close=")">
+                        #{item.id}
+                    </foreach>
+                )
+                join base_role r on (r.id=br.role_id)
+            </if>
         </if>
         where t.dr = 0
         <if test="condition!=null and condition.searchMap!=null">
@@ -113,7 +123,7 @@
                 and (br.id is null or br.id='')
             </if>
         </if>
-        order by t.last_modified desc
+        order by t.id
     </select>
 
     <select id="getResourceById" resultMap="ResourceMap">

@@ -106,7 +106,7 @@ public class UserManagerService {
                 operationLogService.save(new OperationLog(user.getId(),
                         OperationLogBusinessTypeEnum.USER.getKey(),
                         OperationLogOperationTypeEnum.ADD.getKey(),
-                        UserInfo.getInstance().getUserName() + "新增用户：" + user.getName() + "（" + user.getLoginAccount() + "）",
+                        UserInfo.getInstance().getUser().getName() + "新增用户：" + user.getName() + "（" + user.getLoginAccount() + "）",
                         UserInfo.getInstance()));
                 /* 新增角色信息 */
                 this.addUserRoleRelation(user, userRoleVo.getRoleList());
@@ -175,7 +175,7 @@ public class UserManagerService {
 //                    operationLogService.save(new OperationLog(userRole.getId(),
 //                            OperationLogBusinessTypeEnum.USER_ROLE_RELATION.getKey(),
 //                            OperationLogOperationTypeEnum.ADD.getKey(),
-//                            UserInfo.getInstance().getUserName() + "新增用户角色关系，用户：" + user.getName() + "（" + user.getLoginAccount() + "）" + "添加角色：" + role.getName(),
+//                            UserInfo.getInstance().getUser().getName() + "新增用户角色关系，用户：" + user.getName() + "（" + user.getLoginAccount() + "）" + "添加角色：" + role.getName(),
 //                            UserInfo.getInstance()));
                 } else {
                     logger.error("添加用户角色失败，返回数量为0");
@@ -234,7 +234,7 @@ public class UserManagerService {
                 operationLogService.save(new OperationLog(userRoleVo.getId(),
                         OperationLogBusinessTypeEnum.USER.getKey(),
                         OperationLogOperationTypeEnum.DELETE.getKey(),
-                        UserInfo.getInstance().getUserName() + "删除了用户：" + userRoleVo.getName() + "（" + userRoleVo.getLoginAccount() + "）",
+                        UserInfo.getInstance().getUser().getName() + "删除了用户：" + userRoleVo.getName() + "（" + userRoleVo.getLoginAccount() + "）",
                         UserInfo.getInstance()));
                 // 删除角色关系
                 this.deleteUserRoleByUserId(userRoleVo.getId());
@@ -320,7 +320,7 @@ public class UserManagerService {
                 operationLogService.save(new OperationLog(user.getId(),
                         OperationLogBusinessTypeEnum.USER.getKey(),
                         OperationLogOperationTypeEnum.UPDATE.getKey(),
-                        UserInfo.getInstance().getUserName() + "修改用户：" + user.getName() + "（" + user.getLoginAccount() + "）",
+                        UserInfo.getInstance().getUser().getName() + "修改用户：" + user.getName() + "（" + user.getLoginAccount() + "）",
                         UserInfo.getInstance()));
                 /* 处理角色问题 */
                 if(userRoleVo.getRoleList()!=null && userRoleVo.getRoleList().size()>0) {
@@ -379,5 +379,62 @@ public class UserManagerService {
     private int updateUser(User user) {
         InitializeObjectUtil.getInstance().initializeModifyInfo(user, UserInfo.getInstance());
         return this.userManagerDao.updateUser(user);
+    }
+
+    /**
+     * 修改密码
+     * @param userId    用户ID
+     * @param version   版本号
+     * @param newPassword   新密码
+     * @throws UserManagerException
+     */
+    public User updatePassword(Long userId, Integer version, String newPassword) throws UserManagerException {
+        try {
+            if(userId==null || userId<=0) {
+                logger.error("修改密码失败，用户ID为空");
+                throw new UserManagerException("修改密码失败，用户ID为空");
+            }
+            if(version==null || version<0) {
+                logger.error("修改密码失败，版本号为空");
+                throw new UserManagerException("修改密码失败，参数错误");
+            }
+            if(StringUtils.isEmpty(newPassword)) {
+                logger.error("修改密码失败，新密码为空");
+                throw new UserManagerException("修改密码失败，新密码参数为空");
+            }
+            // 查询用户信息
+            User user = this.userManagerDao.getUserById(userId);
+            // 校验版本号
+            if(!user.getVersion().equals(version)) {
+                logger.error("修改密码失败，版本号不同");
+                throw new UserManagerException("修改密码失败，用户已被修改，请重新刷新页面重试");
+            }
+            // 校验新密码是否与老密码相同
+            newPassword = Encrypt.md5Encrypt(newPassword);
+            if(newPassword.equals(user.getPassword())) {
+                logger.error("修改密码失败，新密码与原密码相同");
+                throw new UserManagerException("修改密码失败，新密码与原密码相同");
+            }
+            // 修改密码
+            int update = this.userManagerDao.updatePassword(userId, version, newPassword);
+            if(update==1) {
+                // 添加操作日志
+                operationLogService.save(new OperationLog(user.getId(),
+                        OperationLogBusinessTypeEnum.USER.getKey(),
+                        OperationLogOperationTypeEnum.UPDATE.getKey(),
+                        UserInfo.getInstance().getUser().getName() + "修改了用户" + user.getName() + "（" + user.getLoginAccount() + "）密码",
+                        UserInfo.getInstance()));
+                user.setPassword(newPassword);
+                return user;
+            } else {
+                logger.error("修改密码失败，更新操作返回数据为0，参数：userId=" + userId + "，version=" + version + "，newPassword=" + newPassword);
+                throw new UserManagerException("修改密码失败，请联系管理员");
+            }
+        } catch (UserManagerException e) {
+            throw e;
+        } catch (Exception e) {
+            logger.error("修改密码异常，参数：userId=" + userId + "，version=" + version + "，newPassword=" + newPassword, e);
+            throw new UserManagerException("修改密码异常，请联系管理员");
+        }
     }
 }
