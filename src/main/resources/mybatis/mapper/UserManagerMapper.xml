@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.yytx.maintenance.base.dao.UserManagerDao">
+<mapper namespace="com.maintenance.base.dao.UserManagerDao">
 
-    <resultMap id="UserMap" type="com.yytx.maintenance.base.entity.User">
+    <resultMap id="UserMap" type="com.maintenance.base.entity.User">
         <id column="id" javaType="java.lang.Long" property="id"/>
         <result column="login_account" property="loginAccount"/>
         <result column="password" property="password"/>
@@ -19,7 +19,7 @@
         <result column="create_user" property="createUser"/>
     </resultMap>
 
-    <resultMap id="RoleMap" type="com.yytx.maintenance.base.entity.Role">
+    <resultMap id="RoleMap" type="com.maintenance.base.entity.Role">
         <id column="id" javaType="java.lang.Long" property="id"/>
         <result column="name" property="name"/>
         <result column="code" property="code"/>
@@ -32,7 +32,7 @@
         <result column="create_user" property="createUser"/>
     </resultMap>
 
-    <resultMap id="UserRoleMap" type="com.yytx.maintenance.base.entity.UserRole">
+    <resultMap id="UserRoleMap" type="com.maintenance.base.entity.UserRole">
         <id column="id" javaType="java.lang.Long" property="id"/>
         <result column="user_id" property="userId"/>
         <result column="role_id" property="roleId"/>
@@ -43,7 +43,7 @@
         <result column="create_user" property="createUser"/>
     </resultMap>
 
-    <resultMap id="UserRoleVoMap" type="com.yytx.maintenance.base.vo.UserRoleVo">
+    <resultMap id="UserRoleVoMap" type="com.maintenance.base.vo.UserRoleVo">
         <id column="id" javaType="java.lang.Long" property="id"/>
         <result column="login_account" property="loginAccount"/>
         <result column="password" property="password"/>
@@ -58,7 +58,7 @@
         <result column="last_modify_user" property="lastModifyUser"/>
         <result column="create_time" property="createTime"/>
         <result column="create_user" property="createUser"/>
-        <collection property="roleList" ofType="com.yytx.maintenance.base.entity.Role" select="selectRole" column="{userId=id}" fetchType="lazy" />
+        <collection property="roleList" ofType="com.maintenance.base.entity.Role" select="selectRole" column="{userId=id}" fetchType="lazy" />
     </resultMap>
 
     <sql id="User_Column_List">
@@ -74,7 +74,7 @@
 	</sql>
 
     <sql id="User_Role_Column_List">
-		bur.id, bur.user_id, bur.role_id, bur.dr,
+		bur.id, bur.user_id, bur.role_id,
 		bur.last_modify_user, DATE_FORMAT(bur.last_modified, '%Y-%m-%d %H:%i:%s') as last_modified,
 		bur.create_user, DATE_FORMAT(bur.create_time, '%Y-%m-%d %H:%i:%s') as create_time
 	</sql>
@@ -146,7 +146,7 @@
         select <include refid="Role_Column_List" />
         from base_role r
         join base_user_role bur
-        on (r.id = bur.role_id and bur.dr=0)
+        on (r.id = bur.role_id)
         where r.dr = 0
         <if test="userId != null">
             and bur.user_id = #{userId}
@@ -231,8 +231,7 @@
     <select id="queryUserRoleList" resultMap="UserRoleMap">
         select <include refid="User_Role_Column_List" />
         from base_user_role bur
-        where bur.dr = 0
-        and bur.user_id = #{userId}
+        where bur.user_id = #{userId}
     </select>
 
     <update id="deleteUserRoleByUserId">
