@@ -9,7 +9,6 @@ import com.maintenance.base.service.RoleService;
 import com.maintenance.context.UserInfo;
 import com.maintenance.pojo.SearchParams;
 import com.maintenance.utils.HttpRequestUtil;
-import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
@@ -20,9 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpSession;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ShiroRealm extends AuthorizingRealm {
 	private static Logger logger = LoggerFactory.getLogger(ShiroRealm.class);
@@ -39,24 +36,7 @@ public class ShiroRealm extends AuthorizingRealm {
 	 */
 	@Override
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principal) {
-		User user= (User) SecurityUtils.getSubject().getPrincipal();
-		Map<String,Object> map = new HashMap<String,Object>();
-		map.put("userid",user.getId());
-		/*
-		List<Resource> resources = resourceService.getUserResources(user.getId());
-		List<Role> roles=roleService.getUserRoles(user.getId());
-		// 权限信息对象info,用来存放查出的用户的所有的角色（role）及权限（permission）
-		SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
-		for(Resource resource: resources){
-			info.addStringPermission(resource.getUrl());
-		}
-		for(Role role: roles){
-			info.addRole(role.getName());
-		}
-		return info;
-		*/
 		return new SimpleAuthorizationInfo();
-
 	}
 
 	/**

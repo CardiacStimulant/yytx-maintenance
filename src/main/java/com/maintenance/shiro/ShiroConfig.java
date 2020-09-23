@@ -26,24 +26,6 @@ public class ShiroConfig {
 	}
 
 	/**
-	 * pom.xml引入shiro-spring-boot-starter.jar方式，实现autoconfig
-	 */
-/*	@Bean
-	ShiroFilterChainDefinition shiroFilterChainDefinition() {
-		DefaultShiroFilterChainDefinition definition = new DefaultShiroFilterChainDefinition();
-		definition.addPathDefinition("/css/**", "anon");
-		definition.addPathDefinition("/js/**", "anon");
-		definition.addPathDefinition("/fonts/**", "anon");
-		definition.addPathDefinition("/img/**", "anon");
-		definition.addPathDefinition("/druid/**", "anon");
-		definition.addPathDefinition("/login", "logout");
-		definition.addPathDefinition("/logout", "logout");
-		definition.addPathDefinition("/", "anon");
-		definition.addPathDefinition("/**", "authc");
-		return definition;
-	}*/
-
-	/**
 	 * pom.xml引入原始shiro-spring.jar方式，相当于把原理xml方式配置改成了JAVA方式
 	 * @param securityManager
 	 * @return
@@ -72,5 +54,4 @@ public class ShiroConfig {
 
 		return shiroFilterFactoryBean;
 	}
-	
 }

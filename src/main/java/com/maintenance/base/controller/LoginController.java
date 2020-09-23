@@ -71,10 +71,6 @@ public class LoginController {
     private String shiroLoginUrl;
     @GetMapping("/login")
 	public void login(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        System.out.println("/login redirect -->"+shiroLoginUrl);
-//		resp.setHeader("Access-Control-Allow-Origin", "*");
-//		resp.addHeader("Access-Control-Allow-Methods", "GET,HEAD,POST,PUT,DELETE,TRACE,OPTIONS,PATCH");
-//		resp.addHeader("Access-Control-Allow-Headers", "Content-Type, Accept, Authorization");
 //		resp.sendRedirect(shiroLoginUrl);
 		resp.sendError(HttpServletResponse.SC_UNAUTHORIZED, "未登录");
 	}
