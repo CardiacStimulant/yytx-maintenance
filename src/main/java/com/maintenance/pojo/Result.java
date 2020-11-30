@@ -1,18 +1,14 @@
 package com.maintenance.pojo;
 
+import org.springframework.http.HttpStatus;
+
 import java.io.Serializable;
 
 /**
  * 接口返回对象
  */
 public class Result<T> implements Serializable {
-
 	private static final long serialVersionUID = 1L;
-
-	/**
-	 * 成功标志
-	 */
-	private boolean success;
 
 	/**
 	 * 失败消息
@@ -32,7 +28,7 @@ public class Result<T> implements Serializable {
 	/**
 	 * 结果对象
 	 */
-	private T result;
+	private T data;
 
 	public Integer getCode() {
 		return code;
@@ -50,14 +46,6 @@ public class Result<T> implements Serializable {
 		this.timestamp = timestamp;
 	}
 
-	public boolean isSuccess() {
-		return success;
-	}
-
-	public void setSuccess(boolean success) {
-		this.success = success;
-	}
-
 	public String getMessage() {
 		return message;
 	}
@@ -66,12 +54,55 @@ public class Result<T> implements Serializable {
 		this.message = message;
 	}
 
-	public T getResult() {
+	public T getData() {
+		return data;
+	}
+
+	public void setData(T data) {
+		this.data = data;
+	}
+
+	private Result() {}
+
+	private Result(boolean success, String message, Integer code, long timestamp, T data) {
+		this.message = message;
+		this.code = code;
+		this.timestamp = timestamp;
+		this.data = data;
+	}
+
+	public static Result success() {
+		Result result = new Result();
+		result.setCode(HttpStatus.OK.value());
 		return result;
 	}
 
-	public void setResult(T result) {
-		this.result = result;
+	public static Result<Object> success(Object data) {
+		Result<Object> result = new Result<>();
+		result.setCode(HttpStatus.OK.value());
+		result.setData(data);
+		return result;
 	}
 
+    public static Result<Object> success(Object data, String message) {
+        Result<Object> result = new Result<>();
+        result.setCode(HttpStatus.OK.value());
+        result.setData(data);
+        result.setMessage(message);
+        return result;
+    }
+
+	public static Result<Object> failure(String message) {
+		Result<Object> result = new Result<>();
+		result.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+		result.setMessage(message);
+		return result;
+	}
+
+	public static Result<Object> failure(Integer code, String message) {
+		Result<Object> result = new Result<>();
+		result.setCode(code);
+		result.setMessage(message);
+		return result;
+	}
 }
