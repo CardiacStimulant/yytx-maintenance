@@ -9,6 +9,7 @@ import java.io.Serializable;
  */
 public class Result<T> implements Serializable {
 	private static final long serialVersionUID = 1L;
+	private static Result<Object> result = new Result<>();
 
 	/**
 	 * 失败消息
@@ -64,13 +65,6 @@ public class Result<T> implements Serializable {
 
 	private Result() {}
 
-	private Result(boolean success, String message, Integer code, long timestamp, T data) {
-		this.message = message;
-		this.code = code;
-		this.timestamp = timestamp;
-		this.data = data;
-	}
-
 	public static Result success() {
 		Result result = new Result();
 		result.setCode(HttpStatus.OK.value());
@@ -78,14 +72,12 @@ public class Result<T> implements Serializable {
 	}
 
 	public static Result<Object> success(Object data) {
-		Result<Object> result = new Result<>();
 		result.setCode(HttpStatus.OK.value());
 		result.setData(data);
 		return result;
 	}
 
     public static Result<Object> success(Object data, String message) {
-        Result<Object> result = new Result<>();
         result.setCode(HttpStatus.OK.value());
         result.setData(data);
         result.setMessage(message);
@@ -93,14 +85,12 @@ public class Result<T> implements Serializable {
     }
 
 	public static Result<Object> failure(String message) {
-		Result<Object> result = new Result<>();
 		result.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
 		result.setMessage(message);
 		return result;
 	}
 
 	public static Result<Object> failure(Integer code, String message) {
-		Result<Object> result = new Result<>();
 		result.setCode(code);
 		result.setMessage(message);
 		return result;
