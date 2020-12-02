@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * 跨域拦截器
- * @author wangzh
  * @date 2020/08/11
  */
 public class CORSInterceptor implements HandlerInterceptor {
