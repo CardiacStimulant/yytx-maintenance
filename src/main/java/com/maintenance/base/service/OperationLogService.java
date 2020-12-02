@@ -54,6 +54,10 @@ public class OperationLogService {
         operationLogDao.saveOperationLog(operationLog);
     }
 
+    /**
+     * 异步添加日志
+     * @param operationLog
+     */
     public void saveByThread(final OperationLog operationLog) {
         new Thread(() -> save(operationLog)).start();
     }

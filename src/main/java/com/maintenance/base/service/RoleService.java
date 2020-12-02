@@ -87,7 +87,7 @@ public class RoleService {
      * @return
      * @throws RoleManagerException
      */
-    public Role getRoleById(Long roleId) throws RoleManagerException {
+    private Role getRoleById(Long roleId) throws RoleManagerException {
         if(roleId==null || roleId<=0) {
             logger.error("查询角色信息失败，ID为空");
             throw new RoleManagerException("查询角色信息失败，角色ID为空");
@@ -109,6 +109,7 @@ public class RoleService {
             // 校验角色编码是否重复
             boolean isExists = this.checkRoleCodeExists(role.getCode());
             if(isExists) {
+                logger.error("新增角色信息失败，角色编码重复，参数信息：" + role);
                 throw new RoleManagerException("新增角色信息失败，角色编码重复");
             } else {
                 // 设置创建信息和修改信息
@@ -116,14 +117,14 @@ public class RoleService {
                 int add = this.roleDao.addRole(role);
                 if(add==1) {
                     // 添加操作日志
-                    operationLogService.save(new OperationLog(role.getId(),
+                    operationLogService.saveByThread(new OperationLog(role.getId(),
                             OperationLogBusinessTypeEnum.ROLE.getKey(),
                             OperationLogOperationTypeEnum.ADD.getKey(),
                             UserInfo.getInstance().getUser().getName() + "新增了角色：" + role.getName() + "（" + role.getCode() + "）",
                             UserInfo.getInstance()));
                     role = this.getRoleById(role.getId());
                 } else {
-                    logger.error("新增角色信息失败，返回数量为0");
+                    logger.error("新增角色信息失败，返回数量不正确，数量：" + add);
                     throw new RoleManagerException("保存角色信息失败，请联系管理员");
                 }
             }
@@ -176,14 +177,14 @@ public class RoleService {
             int update = this.roleDao.updateRole(role);
             if(update==1) {
                 // 添加操作日志
-                operationLogService.save(new OperationLog(role.getId(),
+                operationLogService.saveByThread(new OperationLog(role.getId(),
                         OperationLogBusinessTypeEnum.ROLE.getKey(),
                         OperationLogOperationTypeEnum.UPDATE.getKey(),
                         UserInfo.getInstance().getUser().getName() + "修改了角色：" + role.getName() + "（" + role.getCode() + "）",
                         UserInfo.getInstance()));
                 role = this.getRoleById(role.getId());
             } else {
-                logger.error("修改角色信息失败，返回数量为0");
+                logger.error("修改角色信息失败，返回数量不正确，数量：" + update);
                 throw new RoleManagerException("保存角色信息失败，请联系管理员");
             }
         } catch (RoleManagerException e) {
