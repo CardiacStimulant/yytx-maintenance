@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -31,11 +32,12 @@ public class RoleResourceService {
      * @throws RoleManagerException
      */
     @Transactional(rollbackFor = Exception.class)
-    public void addAllRoleResource(Long roleId) throws RoleManagerException {
+    public List<RoleResource> addAllRoleResource(Long roleId) throws RoleManagerException {
         if(roleId==null || roleId<=0) {
             logger.error("角色添加资源失败，角色ID为空");
             throw new RoleManagerException("角色添加资源失败，角色ID为空");
         }
+        List<RoleResource> roleResources = new ArrayList<>();
         try {
             // 查询角色全部未配置的资源
             SearchParams searchParams = new SearchParams();
@@ -48,6 +50,7 @@ public class RoleResourceService {
                 roleResource.setRoleId(roleId);
                 roleResource.setResourceId(resource.getId());
                 this.addRoleResource(roleResource);
+                roleResources.add(roleResource);
             }
         } catch (RoleManagerException e) {
             throw e;
@@ -55,6 +58,7 @@ public class RoleResourceService {
             logger.error("角色添加资源异常，参数：" + roleId, e);
             throw new RoleManagerException("角色添加资源异常，请联系管理员");
         }
+        return roleResources;
     }
 
     /**
@@ -85,7 +89,7 @@ public class RoleResourceService {
      * @return
      * @throws RoleManagerException
      */
-    public RoleResource addRoleResource(RoleResource roleResource) throws RoleManagerException {
+    private void addRoleResource(RoleResource roleResource) throws RoleManagerException {
         if(roleResource==null) {
             logger.error("角色添加资源失败，参数为空");
             throw new RoleManagerException("角色添加资源失败，参数为空");
@@ -107,9 +111,7 @@ public class RoleResourceService {
             } else {
                 InitializeObjectUtil.getInstance().initializeCreateAndModifyInfo(roleResource, UserInfo.getInstance());
                 int add = this.roleResourceDao.addRoleResource(roleResource);
-                if(add==1) {
-                    return roleResource;
-                } else {
+                if(add!=1) {
                     logger.error("角色添加资源失败，新增返回数量为0，参数：" + roleResource);
                     throw new RoleManagerException("角色添加资源失败，请联系管理员");
                 }
@@ -191,7 +193,7 @@ public class RoleResourceService {
      * @return
      * @throws RoleManagerException
      */
-    public RoleResource removeRoleResource(RoleResource roleResource) throws RoleManagerException {
+    private void removeRoleResource(RoleResource roleResource) throws RoleManagerException {
         if(roleResource==null) {
             logger.error("角色移除资源失败，参数为空");
             throw new RoleManagerException("角色移除资源失败，参数为空");
@@ -206,9 +208,7 @@ public class RoleResourceService {
         }
         try {
             int remove = this.roleResourceDao.removeRoleResource(roleResource);
-            if(remove==1) {
-                return roleResource;
-            } else {
+            if(remove!=1) {
                 logger.error("角色移除资源失败，移除返回数量为0，参数：" + roleResource);
                 throw new RoleManagerException("角色移除资源失败，请联系管理员");
             }

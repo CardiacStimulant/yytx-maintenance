@@ -65,7 +65,6 @@ public class ResponseResultHandler implements ResponseBodyAdvice<Object> {
     @ExceptionHandler(RoleManagerException.class)
     @ResponseBody
     public Result<?> exceptionHandler(RoleManagerException e) {
-        logger.error(e.getMessage(), e);
         return Result.failure(e.getMessage());
     }
 

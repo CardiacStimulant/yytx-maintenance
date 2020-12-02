@@ -1,22 +1,19 @@
 package com.maintenance.base.controller;
 
 import com.maintenance.base.entity.RoleResource;
-import com.maintenance.excepion.ResourceException;
-import com.maintenance.pojo.Result;
-import com.maintenance.utils.ResultUtil;
 import com.maintenance.base.service.RoleResourceService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.maintenance.pojo.BaseControllerAnnotation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-@RestController()
+@BaseControllerAnnotation
 @RequestMapping("roleResource")
 public class RoleResourceController {
-    private Logger logger = LoggerFactory.getLogger(RoleResourceController.class);
-
     @Autowired
     private RoleResourceService roleResourceService;
 
@@ -27,17 +24,7 @@ public class RoleResourceController {
      */
     @RequestMapping(value = "/addAllRoleResource", method = RequestMethod.GET)
     public Object addAllRoleResource(@RequestParam("roleId") Long roleId) {
-        Result<String> result;
-        try {
-            this.roleResourceService.addAllRoleResource(roleId);
-            result = new ResultUtil<String>().setData("添加资源成功");
-        } catch (ResourceException e) {
-            result = new ResultUtil<String>().setErrorMsg(e.getMessage());
-        } catch (Exception e) {
-            logger.error("添加资源异常", e);
-            result = new ResultUtil<String>().setErrorMsg("添加资源异常，请联系管理员");
-        }
-        return result;
+        return this.roleResourceService.addAllRoleResource(roleId);
     }
 
     /**
@@ -47,17 +34,8 @@ public class RoleResourceController {
      */
     @RequestMapping(value = "/addRoleResources", method = RequestMethod.POST)
     public Object addRoleResources(@RequestBody List<RoleResource> roleResources) {
-        Result<String> result;
-        try {
-            this.roleResourceService.addRoleResources(roleResources);
-            result = new ResultUtil<String>().setData("添加资源成功");
-        } catch (ResourceException e) {
-            result = new ResultUtil<String>().setErrorMsg(e.getMessage());
-        } catch (Exception e) {
-            logger.error("添加资源异常", e);
-            result = new ResultUtil<String>().setErrorMsg("添加资源异常，请联系管理员");
-        }
-        return result;
+        this.roleResourceService.addRoleResources(roleResources);
+        return roleResources;
     }
 
     /**
@@ -67,17 +45,8 @@ public class RoleResourceController {
      */
     @RequestMapping(value = "/removeAllRoleResource", method = RequestMethod.GET)
     public Object removeAllRoleResource(@RequestParam("roleId") Long roleId) {
-        Result<String> result;
-        try {
-            this.roleResourceService.removeAllRoleResource(roleId);
-            result = new ResultUtil<String>().setData("移除资源成功");
-        } catch (ResourceException e) {
-            result = new ResultUtil<String>().setErrorMsg(e.getMessage());
-        } catch (Exception e) {
-            logger.error("移除资源异常", e);
-            result = new ResultUtil<String>().setErrorMsg("移除资源异常，请联系管理员");
-        }
-        return result;
+        this.roleResourceService.removeAllRoleResource(roleId);
+        return null;
     }
 
     /**
@@ -87,16 +56,7 @@ public class RoleResourceController {
      */
     @RequestMapping(value = "/removeRoleResources", method = RequestMethod.POST)
     public Object removeRoleResources(@RequestBody List<RoleResource> roleResources) {
-        Result<String> result;
-        try {
-            this.roleResourceService.removeRoleResources(roleResources);
-            result = new ResultUtil<String>().setData("移除资源成功");
-        } catch (ResourceException e) {
-            result = new ResultUtil<String>().setErrorMsg(e.getMessage());
-        } catch (Exception e) {
-            logger.error("移除资源异常", e);
-            result = new ResultUtil<String>().setErrorMsg("移除资源异常，请联系管理员");
-        }
-        return result;
+        this.roleResourceService.removeRoleResources(roleResources);
+        return null;
     }
 }
