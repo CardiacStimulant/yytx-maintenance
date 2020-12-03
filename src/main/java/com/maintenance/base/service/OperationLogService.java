@@ -7,15 +7,14 @@ import com.maintenance.base.dao.OperationLogDao;
 import com.maintenance.base.entity.OperationLog;
 import com.maintenance.excepion.OperationLogException;
 import com.maintenance.pojo.SearchParams;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class OperationLogService {
-    private Logger logger = LoggerFactory.getLogger(OperationLogService.class);
     @Autowired
     private OperationLogDao operationLogDao;
 
@@ -27,17 +26,17 @@ public class OperationLogService {
      */
     public PageInfo<OperationLog> queryPage(SearchParams searchParams) throws OperationLogException{
         if(searchParams==null || searchParams.getSearchMap()==null) {
-            logger.error("查询操作记录失败，参数为空");
+            log.error("查询操作记录失败，参数为空");
             throw new OperationLogException("查询操作记录失败，参数错误");
         }
         Integer pageNum = MapUtils.getInteger(searchParams.getSearchMap(), "pageNum");
         Integer pageSize = MapUtils.getInteger(searchParams.getSearchMap(), "pageSize");
         if(pageNum==null || pageNum<=0) {
-            logger.error("查询操作记录失败，参数错误，pageNum为空");
+            log.error("查询操作记录失败，参数错误，pageNum为空");
             throw new OperationLogException("查询操作记录失败，参数错误");
         }
         if(pageSize==null || pageSize<=0) {
-            logger.error("查询操作记录失败，参数错误，pageSize为空");
+            log.error("查询操作记录失败，参数错误，pageSize为空");
             throw new OperationLogException("查询操作记录失败，参数错误");
         }
         try {
@@ -45,7 +44,7 @@ public class OperationLogService {
             Page<OperationLog> page = operationLogDao.queryPage(searchParams);
             return page.toPageInfo();
         } catch (Exception e) {
-            logger.error("查询操作记录分页异常", e);
+            log.error("查询操作记录分页异常", e);
             throw new OperationLogException("查询操作记录分页异常，请联系管理员");
         }
     }
