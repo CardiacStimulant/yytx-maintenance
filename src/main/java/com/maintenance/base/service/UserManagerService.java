@@ -52,6 +52,7 @@ public class UserManagerService {
             logger.error("查询用户管理失败，参数为空");
             throw new UserManagerException("查询用户管理失败，参数错误");
         }
+        /* 分页参数 */
         Integer pageNum = MapUtils.getInteger(searchParams.getSearchMap(), "pageNum");
         Integer pageSize = MapUtils.getInteger(searchParams.getSearchMap(), "pageSize");
         if(pageNum==null || pageNum<=0) {

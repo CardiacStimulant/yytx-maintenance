@@ -1,28 +1,25 @@
 package com.maintenance.base.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.github.pagehelper.PageInfo;
+import com.maintenance.base.service.UserManagerService;
 import com.maintenance.base.vo.UserRoleVo;
 import com.maintenance.excepion.UserManagerException;
-import com.maintenance.pojo.Result;
-import com.maintenance.base.service.UserManagerService;
+import com.maintenance.pojo.BaseControllerAnnotation;
 import com.maintenance.pojo.SearchParams;
-import com.maintenance.utils.ResultUtil;
 import com.maintenance.utils.SearchParamsUtil;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Map;
 
-@RestController()
+@BaseControllerAnnotation
 @RequestMapping("userManager")
 public class UserManagerController {
-    private Logger logger = LoggerFactory.getLogger(UserManagerController.class);
-
     @Autowired
     private UserManagerService userManagerService;
 
@@ -33,23 +30,13 @@ public class UserManagerController {
      */
     @RequestMapping(value = "/queryPage", method = {RequestMethod.POST, RequestMethod.GET})
     public Object queryPage(@RequestParam Map<String, Object> searchMap) {
-        Result<PageInfo<UserRoleVo>> result;
-        try {
-            SearchParams searchParams = new SearchParams();
-            searchParams.setSearchMap(searchMap);
-            // 创建时间的查询条件
-            SearchParamsUtil.parseTimeGroup(searchParams, "createTimeGroup", "createTimeList", null, null);
-            // 更新时间的查询条件
-            SearchParamsUtil.parseTimeGroup(searchParams, "lastModifiedGroup", "modifyTimeList", null, null);
-            PageInfo<UserRoleVo> pageInfo = this.userManagerService.queryPage(searchParams);
-            result = new ResultUtil<PageInfo<UserRoleVo>>().setData(pageInfo);
-        } catch (UserManagerException e) {
-            result = new ResultUtil<PageInfo<UserRoleVo>>().setErrorMsg(e.getMessage());
-        } catch (Exception e) {
-            logger.error("查询用户管理分页数据异常", e);
-            result = new ResultUtil<PageInfo<UserRoleVo>>().setErrorMsg("查询用户管理分页异常，请联系管理员");
-        }
-        return result;
+        SearchParams searchParams = new SearchParams();
+        searchParams.setSearchMap(searchMap);
+        // 创建时间的查询条件
+        SearchParamsUtil.parseTimeGroup(searchParams, "createTimeGroup", "createTimeList", null, null);
+        // 更新时间的查询条件
+        SearchParamsUtil.parseTimeGroup(searchParams, "lastModifiedGroup", "modifyTimeList", null, null);
+        return this.userManagerService.queryPage(searchParams);
     }
 
     /**
@@ -59,17 +46,7 @@ public class UserManagerController {
      */
     @RequestMapping(value = "/addUserManager", method = RequestMethod.POST)
     public Object addUserManager(@RequestBody UserRoleVo userRoleVo) {
-        Result<UserRoleVo> result;
-        try {
-            userRoleVo = this.userManagerService.addUserManager(userRoleVo);
-            result = new ResultUtil<UserRoleVo>().setData(userRoleVo);
-        } catch (UserManagerException e) {
-            result = new ResultUtil<UserRoleVo>().setErrorMsg(e.getMessage());
-        } catch (Exception e) {
-            logger.error("保存用户管理信息异常", e);
-            result = new ResultUtil<UserRoleVo>().setErrorMsg("保存用户信息异常，请联系管理员");
-        }
-        return result;
+        return this.userManagerService.addUserManager(userRoleVo);
     }
 
     /**
@@ -79,17 +56,7 @@ public class UserManagerController {
      */
     @RequestMapping(value = "/updateUserManager", method = RequestMethod.POST)
     public Object updateUserManager(@RequestBody UserRoleVo userRoleVo) {
-        Result<UserRoleVo> result;
-        try {
-            userRoleVo = this.userManagerService.updateUserManager(userRoleVo);
-            result = new ResultUtil<UserRoleVo>().setData(userRoleVo);
-        } catch (UserManagerException e) {
-            result = new ResultUtil<UserRoleVo>().setErrorMsg(e.getMessage());
-        } catch (Exception e) {
-            logger.error("保存用户管理信息异常", e);
-            result = new ResultUtil<UserRoleVo>().setErrorMsg("保存用户信息异常，请联系管理员");
-        }
-        return result;
+        return this.userManagerService.updateUserManager(userRoleVo);
     }
 
     /**
@@ -99,17 +66,8 @@ public class UserManagerController {
      */
     @RequestMapping(value = "/batchDeleteUserManager", method = RequestMethod.POST)
     public Object batchDeleteUserManager(@RequestBody List<UserRoleVo> userRoleVos) {
-        Result<String> result;
-        try {
-            this.userManagerService.batchDeleteUserManager(userRoleVos);
-            result = new ResultUtil<String>().setData("删除成功");
-        } catch (UserManagerException e) {
-            result = new ResultUtil<String>().setErrorMsg(e.getMessage());
-        } catch (Exception e) {
-            logger.error("保存用户管理信息异常", e);
-            result = new ResultUtil<String>().setErrorMsg("保存用户信息异常，请联系管理员");
-        }
-        return result;
+        this.userManagerService.batchDeleteUserManager(userRoleVos);
+        return null;
     }
 
     /**
@@ -119,17 +77,8 @@ public class UserManagerController {
      */
     @RequestMapping(value = "/deleteUserManager", method = RequestMethod.POST)
     public Object deleteUserManager(@RequestBody UserRoleVo userRoleVo) {
-        Result<String> result;
-        try {
-            this.userManagerService.deleteUserManager(userRoleVo);
-            result = new ResultUtil<String>().setData("删除成功");
-        } catch (UserManagerException e) {
-            result = new ResultUtil<String>().setErrorMsg(e.getMessage());
-        } catch (Exception e) {
-            logger.error("保存用户管理信息异常", e);
-            result = new ResultUtil<String>().setErrorMsg("保存用户信息异常，请联系管理员");
-        }
-        return result;
+        this.userManagerService.deleteUserManager(userRoleVo);
+        return null;
     }
 
     /**
@@ -139,28 +88,17 @@ public class UserManagerController {
      */
     @RequestMapping(value = "/updatePassword", method = RequestMethod.POST)
     public Object updatePassword(@RequestBody String jsonData) {
-        Result<String> result;
-        try {
-            if(StringUtils.isEmpty(jsonData)) {
-                logger.error("修改密码失败，参数为空");
-                throw new UserManagerException("修改密码失败，参数为空");
-            }
-            JSONObject json = JSONObject.parseObject(jsonData);
-            // ID
-            Long userId = json.getLong("userId");
-            // version
-            Integer version = json.getInteger("version");
-            // 新密码
-            String newPassword = json.getString("newPassword");
-            // 修改密码
-            this.userManagerService.updatePassword(userId, version, newPassword);
-            result = new ResultUtil<String>().setData("删除成功");
-        } catch (UserManagerException e) {
-            result = new ResultUtil<String>().setErrorMsg(e.getMessage());
-        } catch (Exception e) {
-            logger.error("修改密码异常，参数：" + jsonData, e);
-            result = new ResultUtil<String>().setErrorMsg("修改密码异常，请联系管理员");
+        if(StringUtils.isEmpty(jsonData)) {
+            throw new UserManagerException("修改密码失败，参数为空");
         }
-        return result;
+        JSONObject json = JSONObject.parseObject(jsonData);
+        // ID
+        Long userId = json.getLong("userId");
+        // version
+        Integer version = json.getInteger("version");
+        // 新密码
+        String newPassword = json.getString("newPassword");
+        // 修改密码
+        return this.userManagerService.updatePassword(userId, version, newPassword);
     }
 }
