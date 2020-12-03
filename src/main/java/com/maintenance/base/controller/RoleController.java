@@ -5,8 +5,6 @@ import com.maintenance.base.service.RoleService;
 import com.maintenance.pojo.BaseControllerAnnotation;
 import com.maintenance.pojo.SearchParams;
 import com.maintenance.utils.SearchParamsUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,8 +17,6 @@ import java.util.Map;
 @BaseControllerAnnotation
 @RequestMapping("role")
 public class RoleController {
-    private Logger logger = LoggerFactory.getLogger(RoleController.class);
-
     @Autowired
     private RoleService roleService;
 
