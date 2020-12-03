@@ -1,12 +1,11 @@
 package com.maintenance.context.interceptor;
 
-import com.maintenance.response.ResponseResultInterceptor;
+import com.maintenance.context.response.ResponseResultInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
- * @author wangzh
  * @date 2020/08/11
  */
 @Configuration

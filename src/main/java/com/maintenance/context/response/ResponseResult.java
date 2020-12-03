@@ -1,4 +1,4 @@
-package com.maintenance.response;
+package com.maintenance.context.response;
 
 import java.lang.annotation.*;
 
