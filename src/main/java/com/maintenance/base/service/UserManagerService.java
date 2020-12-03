@@ -17,10 +17,9 @@ import com.maintenance.pojo.SearchParams;
 import com.maintenance.utils.CommUtils;
 import com.maintenance.utils.Encrypt;
 import com.maintenance.utils.InitializeObjectUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,10 +27,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 public class UserManagerService {
-    private Logger logger = LoggerFactory.getLogger(UserManagerService.class);
-
     @Autowired
     private UserManagerDao userManagerDao;
 
@@ -46,18 +44,18 @@ public class UserManagerService {
      */
     public PageInfo<UserRoleVo> queryPage(SearchParams searchParams) throws UserManagerException{
         if(searchParams==null || searchParams.getSearchMap()==null) {
-            logger.error("查询用户管理失败，参数为空");
+            log.error("查询用户管理失败，参数为空");
             throw new UserManagerException("查询用户管理失败，参数错误");
         }
         /* 分页参数 */
         Integer pageNum = MapUtils.getInteger(searchParams.getSearchMap(), "pageNum");
         Integer pageSize = MapUtils.getInteger(searchParams.getSearchMap(), "pageSize");
         if(pageNum==null || pageNum<=0) {
-            logger.error("查询用户管理失败，参数错误，pageNum为空");
+            log.error("查询用户管理失败，参数错误，pageNum为空");
             throw new UserManagerException("查询用户管理失败，参数错误");
         }
         if(pageSize==null || pageSize<=0) {
-            logger.error("查询用户管理失败，参数错误，pageSize为空");
+            log.error("查询用户管理失败，参数错误，pageSize为空");
             throw new UserManagerException("查询用户管理失败，参数错误");
         }
         try {
@@ -65,7 +63,7 @@ public class UserManagerService {
             Page<UserRoleVo> page = userManagerDao.queryPage(searchParams);
             return page.toPageInfo();
         } catch (Exception e) {
-            logger.error("查询用户管理分页异常，参数：" + searchParams.getSearchMap(), e);
+            log.error("查询用户管理分页异常，参数：" + searchParams.getSearchMap(), e);
             throw new UserManagerException("查询用户管理分页异常，请联系管理员");
         }
     }
@@ -79,23 +77,23 @@ public class UserManagerService {
     @Transactional(rollbackFor=Exception.class)
     public UserRoleVo addUserManager(UserRoleVo userRoleVo) throws UserManagerException {
         if(userRoleVo==null) {
-            logger.error("保存用户信息失败，参数为空");
+            log.error("保存用户信息失败，参数为空");
             throw new UserManagerException("保存用户信息失败，参数为空");
         }
         if(StringUtils.isEmpty(userRoleVo.getName())) {
-            logger.error("保存用户信息失败，用户姓名为空");
+            log.error("保存用户信息失败，用户姓名为空");
             throw new UserManagerException("保存用户信息失败，用户姓名为空");
         }
         if(StringUtils.isEmpty(userRoleVo.getLoginAccount())) {
-            logger.error("保存用户信息失败，用户登录账号为空");
+            log.error("保存用户信息失败，用户登录账号为空");
             throw new UserManagerException("保存用户信息失败，用户登录账号为空");
         }
         if(StringUtils.isNotEmpty(userRoleVo.getEmail()) && !CommUtils.isEmail(userRoleVo.getEmail())) {
-            logger.error("保存用户信息失败，邮箱校验失败");
+            log.error("保存用户信息失败，邮箱校验失败");
             throw new UserManagerException("保存用户信息失败，邮箱格式错误");
         }
         if(StringUtils.isNotEmpty(userRoleVo.getMobile()) && !CommUtils.isMobileOrPhone(userRoleVo.getMobile())) {
-            logger.error("保存用户信息失败，电话号码校验失败");
+            log.error("保存用户信息失败，电话号码校验失败");
             throw new UserManagerException("保存用户信息失败，电话号码格式错误");
         }
         try {
@@ -112,14 +110,14 @@ public class UserManagerService {
                 /* 新增角色信息 */
                 this.addUserRoleRelation(user, userRoleVo.getRoleList());
             } else {
-                logger.error("新增用户信息失败，返回数量为0，参数：" + userRoleVo);
+                log.error("新增用户信息失败，返回数量为0，参数：" + userRoleVo);
                 throw new UserManagerException("新增用户信息失败，请联系管理员");
             }
             userRoleVo.initializationUser(user);
         } catch (UserManagerException e) {
             throw e;
         } catch (Exception e) {
-            logger.error("保存用户信息异常，参数：" + userRoleVo, e);
+            log.error("保存用户信息异常，参数：" + userRoleVo, e);
             throw new UserManagerException("保存用户信息异常，请联系管理员");
         }
         return userRoleVo;
@@ -179,7 +177,7 @@ public class UserManagerService {
 //                            UserInfo.getInstance().getUser().getName() + "新增用户角色关系，用户：" + user.getName() + "（" + user.getLoginAccount() + "）" + "添加角色：" + role.getName(),
 //                            UserInfo.getInstance()));
                 } else {
-                    logger.error("添加用户角色失败，返回数量为0");
+                    log.error("添加用户角色失败，返回数量为0");
                 }
             }
         }
@@ -193,7 +191,7 @@ public class UserManagerService {
      */
     public void batchDeleteUserManager(List<UserRoleVo> userRoleVos) throws UserManagerException {
         if(userRoleVos==null || userRoleVos.size()<=0) {
-            logger.error("删除用户失败，参数为空");
+            log.error("删除用户失败，参数为空");
             throw new UserManagerException("删除用户失败，参数为空");
         }
         try {
@@ -203,7 +201,7 @@ public class UserManagerService {
         } catch (UserManagerException e) {
             throw e;
         } catch (Exception e) {
-            logger.error("删除用户管理异常，参数：" + userRoleVos, e);
+            log.error("删除用户管理异常，参数：" + userRoleVos, e);
             throw new UserManagerException("删除用户管理异常，请联系管理员");
         }
     }
@@ -216,15 +214,15 @@ public class UserManagerService {
     @Transactional(rollbackFor = Exception.class)
     public void deleteUserManager(UserRoleVo userRoleVo) throws UserManagerException {
         if(userRoleVo==null) {
-            logger.error("删除用户失败，参数为空");
+            log.error("删除用户失败，参数为空");
             throw new UserManagerException("删除用户失败，参数为空");
         }
         if(userRoleVo.getId()==null || userRoleVo.getId()<=0) {
-            logger.error("删除用户失败，用户ID为空");
+            log.error("删除用户失败，用户ID为空");
             throw new UserManagerException("删除用户失败，用户ID为空");
         }
         if(userRoleVo.getVersion()==null || userRoleVo.getVersion()<0) {
-            logger.error("删除用户失败，版本号为空");
+            log.error("删除用户失败，版本号为空");
             throw new UserManagerException("删除用户失败，参数错误");
         }
         try {
@@ -240,13 +238,13 @@ public class UserManagerService {
                 // 删除角色关系
                 this.deleteUserRoleByUserId(userRoleVo.getId());
             } else {
-                logger.error("删除用户失败，删除数量返回为0，参数：" + userRoleVo);
+                log.error("删除用户失败，删除数量返回为0，参数：" + userRoleVo);
                 throw new UserManagerException("删除用户失败，用户已被修改，请重新刷新页面重试");
             }
         } catch (UserManagerException e) {
             throw e;
         } catch (Exception e) {
-            logger.error("删除用户管理异常，参数：" + userRoleVo, e);
+            log.error("删除用户管理异常，参数：" + userRoleVo, e);
             throw new UserManagerException("删除用户管理异常，请联系管理员");
         }
     }
@@ -273,31 +271,31 @@ public class UserManagerService {
     @Transactional(rollbackFor=Exception.class)
     public UserRoleVo updateUserManager(UserRoleVo userRoleVo) throws UserManagerException {
         if(userRoleVo==null) {
-            logger.error("保存用户信息失败，参数为空");
+            log.error("保存用户信息失败，参数为空");
             throw new UserManagerException("保存用户信息失败，参数为空");
         }
         if(userRoleVo.getId()!=null && userRoleVo.getId()<=0) {
-            logger.error("保存用户信息失败，用户ID为空");
+            log.error("保存用户信息失败，用户ID为空");
             throw new UserManagerException("保存用户信息失败，用户ID为空");
         }
         if(userRoleVo.getVersion()!=null && userRoleVo.getVersion()<0) {
-            logger.error("保存用户信息失败，版本号为空");
+            log.error("保存用户信息失败，版本号为空");
             throw new UserManagerException("保存用户信息失败，参数错误");
         }
         if(StringUtils.isEmpty(userRoleVo.getName())) {
-            logger.error("保存用户信息失败，用户姓名为空");
+            log.error("保存用户信息失败，用户姓名为空");
             throw new UserManagerException("保存用户信息失败，用户姓名为空");
         }
         if(StringUtils.isEmpty(userRoleVo.getLoginAccount())) {
-            logger.error("保存用户信息失败，用户登录账号为空");
+            log.error("保存用户信息失败，用户登录账号为空");
             throw new UserManagerException("保存用户信息失败，用户登录账号为空");
         }
         if(StringUtils.isNotEmpty(userRoleVo.getEmail()) && !CommUtils.isEmail(userRoleVo.getEmail())) {
-            logger.error("保存用户信息失败，邮箱校验失败");
+            log.error("保存用户信息失败，邮箱校验失败");
             throw new UserManagerException("保存用户信息失败，邮箱格式错误");
         }
         if(StringUtils.isNotEmpty(userRoleVo.getMobile()) && !CommUtils.isMobileOrPhone(userRoleVo.getMobile())) {
-            logger.error("保存用户信息失败，电话号码校验失败");
+            log.error("保存用户信息失败，电话号码校验失败");
             throw new UserManagerException("保存用户信息失败，电话号码格式错误");
         }
         try {
@@ -305,12 +303,12 @@ public class UserManagerService {
             User oldUser = this.userManagerDao.getUserById(userRoleVo.getId());
             // 校验版本号
             if(!oldUser.getVersion().equals(userRoleVo.getVersion())) {
-                logger.error("保存用户信息失败，版本号不一致");
+                log.error("保存用户信息失败，版本号不一致");
                 throw new UserManagerException("保存用户信息失败，用户已被修改，请重新刷新页面重试");
             }
             // 校验账号，账号不可修改
             if(!oldUser.getLoginAccount().equals(userRoleVo.getLoginAccount())) {
-                logger.error("保存用户信息失败，账号不一致");
+                log.error("保存用户信息失败，账号不一致");
                 throw new UserManagerException("保存用户信息失败，参数错误");
             }
             /* 修改用户信息 */
@@ -359,14 +357,14 @@ public class UserManagerService {
                     this.deleteUserRoleByUserId(user.getId());
                 }
             } else {
-                logger.error("保存用户信息失败，返回数量为0，参数：" + user);
+                log.error("保存用户信息失败，返回数量为0，参数：" + user);
                 throw new UserManagerException("保存用户信息失败，用户已被修改，请重新刷新页面重试");
             }
             userRoleVo.initializationUser(user);
         } catch (UserManagerException e) {
             throw e;
         } catch (Exception e) {
-            logger.error("保存用户信息异常，参数：" + userRoleVo, e);
+            log.error("保存用户信息异常，参数：" + userRoleVo, e);
             throw new UserManagerException("保存用户信息异常，请联系管理员");
         }
         return userRoleVo;
@@ -392,28 +390,28 @@ public class UserManagerService {
     public User updatePassword(Long userId, Integer version, String newPassword) throws UserManagerException {
         try {
             if(userId==null || userId<=0) {
-                logger.error("修改密码失败，用户ID为空");
+                log.error("修改密码失败，用户ID为空");
                 throw new UserManagerException("修改密码失败，用户ID为空");
             }
             if(version==null || version<0) {
-                logger.error("修改密码失败，版本号为空");
+                log.error("修改密码失败，版本号为空");
                 throw new UserManagerException("修改密码失败，参数错误");
             }
             if(StringUtils.isEmpty(newPassword)) {
-                logger.error("修改密码失败，新密码为空");
+                log.error("修改密码失败，新密码为空");
                 throw new UserManagerException("修改密码失败，新密码参数为空");
             }
             // 查询用户信息
             User user = this.userManagerDao.getUserById(userId);
             // 校验版本号
             if(!user.getVersion().equals(version)) {
-                logger.error("修改密码失败，版本号不同");
+                log.error("修改密码失败，版本号不同");
                 throw new UserManagerException("修改密码失败，用户已被修改，请重新刷新页面重试");
             }
             // 校验新密码是否与老密码相同
             newPassword = Encrypt.md5Encrypt(newPassword);
             if(newPassword.equals(user.getPassword())) {
-                logger.error("修改密码失败，新密码与原密码相同");
+                log.error("修改密码失败，新密码与原密码相同");
                 throw new UserManagerException("修改密码失败，新密码与原密码相同");
             }
             // 修改密码
@@ -428,13 +426,13 @@ public class UserManagerService {
                 user.setPassword(newPassword);
                 return user;
             } else {
-                logger.error("修改密码失败，更新操作返回数据为0，参数：userId=" + userId + "，version=" + version + "，newPassword=" + newPassword);
+                log.error("修改密码失败，更新操作返回数据为0，参数：userId=" + userId + "，version=" + version + "，newPassword=" + newPassword);
                 throw new UserManagerException("修改密码失败，请联系管理员");
             }
         } catch (UserManagerException e) {
             throw e;
         } catch (Exception e) {
-            logger.error("修改密码异常，参数：userId=" + userId + "，version=" + version + "，newPassword=" + newPassword, e);
+            log.error("修改密码异常，参数：userId=" + userId + "，version=" + version + "，newPassword=" + newPassword, e);
             throw new UserManagerException("修改密码异常，请联系管理员");
         }
     }

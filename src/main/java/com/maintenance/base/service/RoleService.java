@@ -12,20 +12,18 @@ import com.maintenance.constant.OperationLogOperationTypeEnum;
 import com.maintenance.context.UserInfo;
 import com.maintenance.pojo.SearchParams;
 import com.maintenance.utils.InitializeObjectUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Slf4j
 @Service
 public class RoleService {
-    private Logger logger = LoggerFactory.getLogger(RoleService.class);
-
     @Autowired
     private RoleDao roleDao;
 
@@ -44,17 +42,17 @@ public class RoleService {
      */
     public PageInfo<Role> queryPage(SearchParams searchParams) throws RoleManagerException {
         if(searchParams==null || searchParams.getSearchMap()==null) {
-            logger.error("查询角色管理失败，参数为空");
+            log.error("查询角色管理失败，参数为空");
             throw new RoleManagerException("查询角色管理失败，参数错误");
         }
         Integer pageNum = MapUtils.getInteger(searchParams.getSearchMap(), "pageNum");
         Integer pageSize = MapUtils.getInteger(searchParams.getSearchMap(), "pageSize");
         if(pageNum==null || pageNum<=0) {
-            logger.error("查询角色管理失败，参数错误，pageNum为空");
+            log.error("查询角色管理失败，参数错误，pageNum为空");
             throw new RoleManagerException("查询角色管理失败，参数错误");
         }
         if(pageSize==null || pageSize<=0) {
-            logger.error("查询角色管理失败，参数错误，pageSize为空");
+            log.error("查询角色管理失败，参数错误，pageSize为空");
             throw new RoleManagerException("查询角色管理失败，参数错误");
         }
         try {
@@ -62,7 +60,7 @@ public class RoleService {
             Page<Role> page = roleDao.queryPage(searchParams);
             return page.toPageInfo();
         } catch (Exception e) {
-            logger.error("查询角色管理分页异常，参数：" + searchParams.getSearchMap(), e);
+            log.error("查询角色管理分页异常，参数：" + searchParams.getSearchMap(), e);
             throw new RoleManagerException("查询角色管理分页异常，请联系管理员");
         }
     }
@@ -76,7 +74,7 @@ public class RoleService {
         try {
             return roleDao.queryList(searchParams);
         } catch (Exception e) {
-            logger.error("查询角色信息异常，参数：" + searchParams.getSearchMap(), e);
+            log.error("查询角色信息异常，参数：" + searchParams.getSearchMap(), e);
             throw new RoleManagerException("查询角色信息异常，请联系管理员");
         }
     }
@@ -89,7 +87,7 @@ public class RoleService {
      */
     private Role getRoleById(Long roleId) throws RoleManagerException {
         if(roleId==null || roleId<=0) {
-            logger.error("查询角色信息失败，ID为空");
+            log.error("查询角色信息失败，ID为空");
             throw new RoleManagerException("查询角色信息失败，角色ID为空");
         }
         try {
@@ -109,7 +107,7 @@ public class RoleService {
             // 校验角色编码是否重复
             boolean isExists = this.checkRoleCodeExists(role.getCode());
             if(isExists) {
-                logger.error("新增角色信息失败，角色编码重复，参数信息：" + role);
+                log.error("新增角色信息失败，角色编码重复，参数信息：" + role);
                 throw new RoleManagerException("新增角色信息失败，角色编码重复");
             } else {
                 // 设置创建信息和修改信息
@@ -124,14 +122,14 @@ public class RoleService {
                             UserInfo.getInstance()));
                     role = this.getRoleById(role.getId());
                 } else {
-                    logger.error("新增角色信息失败，返回数量不正确，数量：" + add);
+                    log.error("新增角色信息失败，返回数量不正确，数量：" + add);
                     throw new RoleManagerException("保存角色信息失败，请联系管理员");
                 }
             }
         } catch (RoleManagerException e) {
             throw e;
         } catch (Exception e) {
-            logger.error("新增角色信息异常，参数：" + role, e);
+            log.error("新增角色信息异常，参数：" + role, e);
             throw new RoleManagerException("保存角色信息异常，请联系管理员");
         }
         return role;
@@ -144,19 +142,19 @@ public class RoleService {
      */
     public Role updateRole(Role role) throws RoleManagerException {
         if(role==null) {
-            logger.error("修改角色信息失败，参数为空");
+            log.error("修改角色信息失败，参数为空");
             throw new RoleManagerException("保存角色信息失败，参数为空");
         }
         if(role.getId()==null || role.getId()<=0) {
-            logger.error("修改角色信息失败，角色ID为空");
+            log.error("修改角色信息失败，角色ID为空");
             throw new RoleManagerException("保存角色信息失败，角色ID为空");
         }
         if(StringUtils.isEmpty(role.getName())) {
-            logger.error("修改角色信息失败，角色名称为空");
+            log.error("修改角色信息失败，角色名称为空");
             throw new RoleManagerException("保存角色信息失败，角色名称为空");
         }
         if(StringUtils.isEmpty(role.getCode())) {
-            logger.error("修改角色信息失败，角色编码为空");
+            log.error("修改角色信息失败，角色编码为空");
             throw new RoleManagerException("保存角色信息失败，角色编码为空");
         }
         try {
@@ -164,12 +162,12 @@ public class RoleService {
             Role oldRole = this.getRoleById(role.getId());
             // 校验版本号
             if(!oldRole.getVersion().equals(role.getVersion())) {
-                logger.error("修改角色信息失败，版本号不一致");
+                log.error("修改角色信息失败，版本号不一致");
                 throw new RoleManagerException("保存角色信息失败，角色已被修改，请重新刷新页面重试");
             }
             // 校验账号，角色编码不可修改
             if(!role.getCode().equals(oldRole.getCode())) {
-                logger.error("保存角色信息失败，角色编码不一致");
+                log.error("保存角色信息失败，角色编码不一致");
                 throw new RoleManagerException("保存角色信息失败，参数错误");
             }
             // 设置创建信息和修改信息
@@ -184,13 +182,13 @@ public class RoleService {
                         UserInfo.getInstance()));
                 role = this.getRoleById(role.getId());
             } else {
-                logger.error("修改角色信息失败，返回数量不正确，数量：" + update);
+                log.error("修改角色信息失败，返回数量不正确，数量：" + update);
                 throw new RoleManagerException("保存角色信息失败，请联系管理员");
             }
         } catch (RoleManagerException e) {
             throw e;
         } catch (Exception e) {
-            logger.error("修改角色信息异常，参数：" + role, e);
+            log.error("修改角色信息异常，参数：" + role, e);
             throw new RoleManagerException("保存角色信息异常，请联系管理员");
         }
         return role;
@@ -212,7 +210,7 @@ public class RoleService {
      */
     public void batchDeleteRole(List<Role> roles) throws RoleManagerException {
         if(roles==null || roles.size()<=0) {
-            logger.error("删除角色失败，参数为空");
+            log.error("删除角色失败，参数为空");
             throw new RoleManagerException("删除角色失败，参数为空");
         }
         try {
@@ -222,7 +220,7 @@ public class RoleService {
         } catch (RoleManagerException e) {
             throw e;
         } catch (Exception e) {
-            logger.error("删除角色异常，参数：" + roles, e);
+            log.error("删除角色异常，参数：" + roles, e);
             throw new RoleManagerException("删除角色异常，请联系管理员");
         }
     }
@@ -235,15 +233,15 @@ public class RoleService {
     @Transactional(rollbackFor = Exception.class)
     public void deleteRole(Role role) throws RoleManagerException {
         if(role==null) {
-            logger.error("删除角色失败，参数为空");
+            log.error("删除角色失败，参数为空");
             throw new RoleManagerException("删除角色失败，参数为空");
         }
         if(role.getId()==null || role.getId()<=0) {
-            logger.error("删除角色失败，角色ID为空");
+            log.error("删除角色失败，角色ID为空");
             throw new RoleManagerException("删除角色失败，角色ID为空");
         }
         if(role.getVersion()==null || role.getVersion()<0) {
-            logger.error("删除角色失败，版本号为空");
+            log.error("删除角色失败，版本号为空");
             throw new RoleManagerException("删除角色失败，参数错误");
         }
         try {
@@ -259,13 +257,13 @@ public class RoleService {
                 // 删除角色关系
                 this.roleResourceService.removeAllRoleResource(role.getId());
             } else {
-                logger.error("删除角色失败，删除数量返回为0，参数：" + role);
+                log.error("删除角色失败，删除数量返回为0，参数：" + role);
                 throw new RoleManagerException("删除角色失败，角色已被修改，请重新刷新页面重试");
             }
         } catch (RoleManagerException e) {
             throw e;
         } catch (Exception e) {
-            logger.error("删除角色管理异常，参数：" + role, e);
+            log.error("删除角色管理异常，参数：" + role, e);
             throw new RoleManagerException("删除角色管理异常，请联系管理员");
         }
     }
