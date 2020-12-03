@@ -7,6 +7,7 @@ import com.maintenance.excepion.UserManagerException;
 import com.maintenance.pojo.BaseControllerAnnotation;
 import com.maintenance.pojo.SearchParams;
 import com.maintenance.utils.SearchParamsUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @BaseControllerAnnotation
 @RequestMapping("userManager")
 public class UserManagerController {
@@ -89,6 +91,7 @@ public class UserManagerController {
     @RequestMapping(value = "/updatePassword", method = RequestMethod.POST)
     public Object updatePassword(@RequestBody String jsonData) {
         if(StringUtils.isEmpty(jsonData)) {
+            log.error("修改密码失败，参数为空");
             throw new UserManagerException("修改密码失败，参数为空");
         }
         JSONObject json = JSONObject.parseObject(jsonData);
