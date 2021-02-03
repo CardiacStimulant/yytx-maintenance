@@ -7,7 +7,6 @@ import com.maintenance.utils.Encrypt;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.subject.Subject;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -58,11 +57,8 @@ public class LoginController {
     /**
      * 未登录或登录失败后跳转到登录页
      */
-    @Value("${shiro.loginUrl}")
-    private String shiroLoginUrl;
     @GetMapping("/login")
 	public void login(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-//		resp.sendRedirect(shiroLoginUrl);
 		resp.sendError(HttpServletResponse.SC_UNAUTHORIZED, "未登录");
 	}
 }
