@@ -391,41 +391,6 @@ public class HttpRequestUtil {
             ((HttpURLConnection) conn).disconnect();
         }
     }
-//	public static String postFile(String path,File file ) throws ClientProtocolException, IOException{
-//		StringBuffer buffer = new StringBuffer();
-//		CloseableHttpClient httpClient = HttpClientBuilder.create().build();
-//		CloseableHttpResponse httpResponse = null;
-//		RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(200000).setSocketTimeout(200000000).build();
-//		HttpPost httpPost = new HttpPost(path);
-//		httpPost.setConfig(requestConfig);
-//		MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
-//
-//		//multipartEntityBuilder.addBinaryBody("file", file,ContentType.create("image/png"),"abc.pdf");
-//		//当设置了setSocketTimeout参数后，以下代码上传PDF不能成功，将setSocketTimeout参数去掉后此可以上传成功。上传图片则没有个限制
-//		//multipartEntityBuilder.addBinaryBody("file",file,ContentType.create("application/octet-stream"),"abd.pdf");
-//		multipartEntityBuilder.addBinaryBody("file",file);
-//		//multipartEntityBuilder.addPart("comment", new StringBody("This is comment", ContentType.TEXT_PLAIN));
-//		multipartEntityBuilder.addTextBody("comment", "this is comment");
-//		HttpEntity httpEntity = multipartEntityBuilder.build();
-//		httpPost.setEntity(httpEntity);
-//
-//		httpResponse = httpClient.execute(httpPost);
-//		HttpEntity responseEntity = httpResponse.getEntity();
-//		int statusCode= httpResponse.getStatusLine().getStatusCode();
-//		if(statusCode == 200){
-//			BufferedReader reader = new BufferedReader(new InputStreamReader(responseEntity.getContent()));
-//			String str = "";
-//			while(!StringUtils.isBlank(str = reader.readLine())) {
-//				buffer.append(str);
-//			}
-//		}
-//
-//		httpClient.close();
-//		if(httpResponse!=null){
-//			httpResponse.close();
-//		}
-//		return buffer.toString();
-//	}
 
     /**
      * 获取Sping web相关属性
@@ -443,28 +408,5 @@ public class HttpRequestUtil {
         ServletRequestAttributes attrs = (ServletRequestAttributes) RequestContextHolder
                 .getRequestAttributes();
         return attrs.getRequest();
-    }
-
-    public static void main(String[] args) throws Exception {
-        // json.addProperty("app_key", "99653B0C7EC6897C2F426C0E13A9D66C");
-        // json.addProperty("product_key", "PBX");
-        // json.addProperty("cust_account", "1508832869122_13935");
-        // String Myurl =
-        // "http://cloud.yonyoutelecom.cn/CombinationServer/queryPhoneResource.do";
-
-        // json.addProperty("product_type", "yuy");
-        // String Myurl =
-        // "http://cloud.yonyoutelecom.cn/CombinationServer/verifyProductAccount";
-
-        // String Myurl =
-        // "http://cloud.yonyoutelecom.cn/CombinationServer/queryPackages";
-        // String ret = HttpRequestUtil.postJSONData(Myurl, json.toString());
-
-        // 测试httpClientPostWithAuthorization
-		/*String url = "http://180.168.35.114:80/uas/20151201/accounts/getbalance.json";
-		json.put("pstnnumber", "26136841");
-		String authorizationValue = "ODg5OTAwOnl1bmVhc3kxMjM6MTAxODAzMjc=";
-		JSONObject httpClientPostWithAuthorization = httpClientPostWithAuthorization(authorizationValue, url, json);
-		System.out.println(httpClientPostWithAuthorization);*/
     }
 }
