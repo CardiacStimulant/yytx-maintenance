@@ -15,7 +15,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebAppConfig implements WebMvcConfigurer {
     /**
-     * 添加拦截器规则
+     * CORSInterceptor：添加拦截器规则
+     * ResponseResultInterceptor：controller返回对象包装拦截器
      * @param registry
      */
     @Override
