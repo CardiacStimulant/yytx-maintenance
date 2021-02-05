@@ -8,14 +8,12 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * 跨域拦截器
- * @date 2020/08/11
+ * @author liangxchc
  */
 public class CORSInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         response.addHeader("Access-Control-Allow-Origin", "*");
-        //response.addHeader("Access-Control-Allow-Methods", "POST");
-        //response.addHeader("Access-Control-Allow-Headers", "x-requested-with,content-type");
         return true;
     }
 
