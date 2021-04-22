@@ -53,7 +53,7 @@
         <dependency>
             <groupId>org.mybatis</groupId>
             <artifactId>mybatis</artifactId>
-            <version>3.4.5</version>
+            <version>3.5.6</version>
         </dependency>
 
         <!-- spring-mybatis支持，可以使Application启动类自动扫描到@Mapper注解，也可以直接使用@MapperScan来指定扫描 -->
